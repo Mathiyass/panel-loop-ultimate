@@ -1,0 +1,17 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Caches & Logs
+*.log
+gl_temp_inspect/
+
+# Media and scratch test captures
+video_analysis/
+*.png
+
+# OS metadata
+Thumbs.db
+Desktop.ini
+.DS_Store
