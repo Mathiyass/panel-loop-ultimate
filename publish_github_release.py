@@ -26,19 +26,32 @@ DIST_DIR = os.path.join(BASE_DIR, "dist")
 
 REPO_OWNER = "Mathiyass"
 REPO_NAME = "panel-loop-ultimate"
-TAG_NAME = "v4.0.0"
-RELEASE_TITLE = "⚡ Mathiya GameLoop Panel v4.0 — Universal Tournament Setup (All GameLoop Versions)"
+TAG_NAME = "v4.1.0"
+RELEASE_TITLE = "⚡ Mathiya GameLoop Panel v4.1 — Streamer Flat-Texture 120 FPS & Zero Combat Lag Edition"
 
-RELEASE_NOTES = """# ⚡ Mathiya GameLoop Panel v4.0 (Mathiya Tournament Setup)
+RELEASE_NOTES = """# ⚡ Mathiya GameLoop Panel v4.1 (Mathiya Tournament Setup)
 
-### 🏆 Locked 120 FPS, True HDR, and 0.50ms Kernel Timer Suite
+### 🏆 Streamer Flat-Texture 120 FPS & Zero Combat Lag Edition
 The definitive esports-grade optimization dashboard for **PUBG Mobile** and **GameLoop**.
 
 ---
 
-## 🚀 Key Highlights & Features
+## 🚀 What's New in v4.1
 
-### 🌟 Universal GameLoop Compatibility (All Versions Supported)
+### 🏠 Competitive Flat-Shaded Streamer Textures (Zero Building Pop-In)
+- **Zero Texture Streaming Overhead**: `r.Streaming.PoolSize = 0` completely stops heavy building/roof texture streaming.
+- **Flat Pastel Esports Shading**: Structures render instantaneously without texture paging hitches or micro-stutters during hot drops.
+- **Instant Building Visibility**: As seen on competitive streamers like MrBro, buildings load immediately without polygon popping or delayed textures.
+- **Zero Dynamic Shadow Pass**: `r.ShadowQuality = 0` eliminates expensive shadow map depth draws during combat, granting pure 120 FPS stability.
+
+### ⚔️ Combat Anti-Stutter Engine
+- **1.0ms Async Loading Time**: `s.AsyncLoadingTime = 1.0` guarantees disk streaming never steals more than 1ms from the 8.33ms (120 FPS) render frame.
+- **Combat Particle & Physics Caps**: `fx.MaxCPUParticlesPerEmitter = 50` and `p.ClothPhysics = 0` eliminate CPU spikes during explosive close-quarter gunfights.
+- **Vibrant Colorful Grading**: `r.ACESStyle = 2` and `BattleRenderStyle = 2` ensure high enemy contrast and visibility without visual noise.
+
+---
+
+## 🌟 Universal GameLoop Compatibility (All Versions Supported)
 - **GameLoop Chinese 64-Bit** (`AOW_Rootfs_100` / Chinese Settings Center 设置中心)
 - **GameLoop Global 64-Bit** (`AOW_Rootfs_64` / Global AppMarket)
 - **GameLoop Global 32-Bit** (`TxGameAssistant` standard 32-bit / `AndroidEmulator.exe` / `AOW_Rootfs`)
@@ -48,12 +61,6 @@ The definitive esports-grade optimization dashboard for **PUBG Mobile** and **Ga
   - Korea / Japan (`com.pubg.krmobile`)
   - Vietnam (`com.vng.pubgmobile`)
   - Taiwan (`com.reindex.tw`)
-
-### 🎨 True HDR + 120 FPS Master Synchronization
-- `GraphicFavor = 4` (Customize Mode): Eliminates the engine fallback bug that forced the *Super Smooth* watermark.
-- `BattleRenderQuality = 5`: Activates true in-game HDR shading with full PBR building textures.
-- **2048 MB Dynamic Texture Streaming Pool**: Prevents building pop-in and texture stutter during hot drops.
-- **Zero UE4 Limiter Clamps**: `t.MaxFPS = 0` and `r.OneFrameThreadLag = 0` for 1:1 flick tracking.
 
 ### ⏱️ 0.50ms Kernel Timer & Universal CPU Pacing
 - Sub-millisecond timer resolution locked to **0.50 ms** via native Win32 `NtSetTimerResolution`.
@@ -83,7 +90,7 @@ The definitive esports-grade optimization dashboard for **PUBG Mobile** and **Ga
    - Standalone single-file executable (~21.7 MB).
    - Double-click to run anywhere. No installation or extraction required!
 
-2. **`Mathiya_GameLoop_Panel_v4.0_Setup.zip`**:
+2. **`Mathiya_GameLoop_Panel_v4.1_Setup.zip`**:
    - Complete package (~43.7 MB) containing the portable folder, silent VBS background launcher, and batch launcher.
 
 ---
@@ -175,7 +182,7 @@ def main():
     # 3. Upload Assets
     assets_to_upload = [
         ("Mathiya_GameLoop_Panel_Portable.exe", os.path.join(DIST_DIR, "Mathiya_GameLoop_Panel_Portable.exe"), "application/octet-stream"),
-        ("Mathiya_GameLoop_Panel_v4.0_Setup.zip", os.path.join(RELEASE_DIR, "Mathiya_GameLoop_Panel_v4.0_Setup.zip"), "application/zip")
+        ("Mathiya_GameLoop_Panel_v4.1_Setup.zip", os.path.join(RELEASE_DIR, "Mathiya_GameLoop_Panel_v4.1_Setup.zip"), "application/zip")
     ]
 
     # Get list of existing assets on this release

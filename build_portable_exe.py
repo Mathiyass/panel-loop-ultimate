@@ -19,11 +19,27 @@ BUILD_DIR = os.path.join(BASE_DIR, "build")
 ASSETS_DIR = os.path.join(BASE_DIR, "assets")
 ICON_PATH = os.path.join(ASSETS_DIR, "mathiya_icon.ico")
 
+import stat
+
+def remove_readonly(func, path, excinfo):
+    try:
+        os.chmod(path, stat.S_IWRITE)
+        func(path)
+    except Exception:
+        pass
+
 def build_exe():
     print("[*] ========================================================")
     print("[*] BUILDING PORTABLE STANDALONE EXECUTABLE: MathiyaGameLoopPanel.exe")
     print("[*] Embedding Custom Esports Icon: assets/mathiya_icon.ico")
     print("[*] ========================================================")
+
+    target_dir = os.path.join(DIST_DIR, "MathiyaGameLoopPanel")
+    if os.path.exists(target_dir):
+        try:
+            shutil.rmtree(target_dir, onerror=remove_readonly)
+        except Exception as e:
+            print(f"[!] Notice cleaning old dist: {e}")
 
     cmd = [
         sys.executable, "-m", "PyInstaller",

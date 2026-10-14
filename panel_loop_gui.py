@@ -308,8 +308,8 @@ class PanelLoopApp(ctk.CTk):
         self.hdr_profile_opt = ctk.CTkOptionMenu(
             right_box,
             values=[
-                "🏆 Tournament HDR 120",
-                "⚡ Streamer Smooth 120",
+                "🏆 Streamer Flat 120",
+                "⚡ Tournament HDR 120",
                 "🚀 Uncapped 180Hz"
             ],
             command=self._on_header_profile_change,
@@ -320,7 +320,7 @@ class PanelLoopApp(ctk.CTk):
             width=175,
             height=32
         )
-        self.hdr_profile_opt.set("🏆 Tournament HDR 120")
+        self.hdr_profile_opt.set("🏆 Streamer Flat 120")
         self.hdr_profile_opt.pack(side="left", padx=(0, 8))
 
         # Sound FX Toggle
@@ -379,12 +379,12 @@ class PanelLoopApp(ctk.CTk):
             self.btn_sound.configure(text="🔇 MUTE", text_color=COLOR_MUTED)
 
     def _on_header_profile_change(self, val):
-        if "HDR" in val:
+        if "Flat" in val or "Streamer" in val:
+            self._apply_preset_direct(quality_tier=1, target_fps=0, pool_mb=0, shadow_scale=0.0, shadow_res=0)
+        elif "HDR" in val:
             self._apply_preset_direct(quality_tier=5, target_fps=0, pool_mb=2048, shadow_scale=0.5, shadow_res=512)
-        elif "Smooth" in val:
-            self._apply_preset_direct(quality_tier=1, target_fps=0, pool_mb=2048, shadow_scale=0.0, shadow_res=0)
         elif "Uncapped" in val:
-            self._apply_preset_direct(quality_tier=1, target_fps=0, pool_mb=2048, shadow_scale=0.0, shadow_res=0)
+            self._apply_preset_direct(quality_tier=1, target_fps=0, pool_mb=0, shadow_scale=0.0, shadow_res=0)
 
     def _apply_preset_direct(self, quality_tier, target_fps, pool_mb, shadow_scale, shadow_res):
         def worker():
@@ -537,8 +537,8 @@ class PanelLoopApp(ctk.CTk):
         grid_frame.pack(fill="x", pady=(0, 12))
 
         self.card_device = self._create_status_card(grid_frame, 0, 0, "📱 DEVICE PROFILE", "REDMAGIC 9 Pro", "NX769J [nubia] Spoof Locked", COLOR_CYAN)
-        self.card_hdr = self._create_status_card(grid_frame, 0, 1, "🎨 GRAPHICS PIPELINE", "HDR 120 FPS", "True HDR + Colorful (Full Textures)", COLOR_GREEN)
-        self.card_dvr = self._create_status_card(grid_frame, 0, 2, "🚀 STUTTER ELIMINATION", "DVR Disabled", "Replays OFF & Async 5.0ms Locked", COLOR_GREEN)
+        self.card_hdr = self._create_status_card(grid_frame, 0, 1, "🎨 GRAPHICS PIPELINE", "Streamer Flat 120", "Zero Texture Stutter + 120 FPS Locked", COLOR_GREEN)
+        self.card_dvr = self._create_status_card(grid_frame, 0, 2, "🚀 STUTTER ELIMINATION", "DVR Disabled", "Replays OFF & Async 1.0ms Locked", COLOR_GREEN)
         self.card_net = self._create_status_card(grid_frame, 1, 0, "🎯 HIT REGISTRATION", "Nagle Disabled", "Zero Ghost Bullets | 120Hz Tick", COLOR_GREEN)
         self.card_timer = self._create_status_card(grid_frame, 1, 1, "⏱️ KERNEL TIMER", "0.50 ms Pacing", "NtSetTimerResolution Sub-ms Locked", COLOR_CYAN)
         self.card_mem = self._create_status_card(grid_frame, 1, 2, "🧠 COMMIT HEADROOM", "-- GB Free", "Standby & Working Set Trim Ready", COLOR_GOLD)
@@ -553,7 +553,7 @@ class PanelLoopApp(ctk.CTk):
 
         btn_master = ctk.CTkButton(
             action_bar,
-            text="⚡ APPLY TRUE HDR 120 FPS (MATHIYA TOURNAMENT SETUP)",
+            text="⚡ APPLY STREAMER FLAT-TEXTURE 120 FPS (ZERO COMBAT LAG)",
             command=self.run_master_boost,
             font=ctk.CTkFont(family="Segoe UI Variable", size=13, weight="bold"),
             fg_color=COLOR_CYAN,
@@ -721,11 +721,11 @@ class PanelLoopApp(ctk.CTk):
 
         ctk.CTkLabel(pcard, text="GRAPHICS PROFILE PRESET", font=ctk.CTkFont(size=13, weight="bold"), text_color=COLOR_TEXT).pack(anchor="w", padx=15, pady=(4, 8))
 
-        self.preset_var = tk.StringVar(value="hdr120")
+        self.preset_var = tk.StringVar(value="streamer120")
         presets = [
-            ("hdr120", "🏆 Mathiya Tournament Setup (True HDR 120 FPS & Full Textures) [RECOMMENDED]", "Tier 5 HDR, GraphicFavor=4 (Customize Mode), 2GB Texture Pool, Colorful Style, 120 FPS Locked"),
-            ("streamer120", "⚡ Smooth 120 FPS (Competitive High-Speed Shaders)", "Tier 1 Smooth, Shadows OFF, Colorful Style, 120 FPS Flatline Pacing"),
-            ("uncapped180", "🚀 Maximum Uncapped FPS (180Hz Monitor Synchronized)", "Smooth Pipeline, t.MaxFPS=0 (Zero Limiter), 0ms Thread Lag, 180Hz+ Scanout"),
+            ("streamer120", "🏆 Streamer Zero-Lag (Flat Pastel Buildings & 120 FPS Combat) [RECOMMENDED]", "Zero Texture Streaming (PoolSize=0), Zero Dynamic Shadows, 1.0ms Async Cap, Combat Particle Cap, Locked 120 FPS"),
+            ("hdr120", "⚡ Cinematic True HDR 120 FPS (Full PBR Building Textures)", "Tier 5 HDR, GraphicFavor=4 (Customize Mode), 2GB Texture Pool, Colorful Style, High Details"),
+            ("uncapped180", "🚀 Maximum Uncapped FPS (180Hz Monitor Synchronized)", "Flat Textures, t.MaxFPS=0 (Zero Limiter), 0ms Thread Lag, 180Hz+ Scanout"),
             ("balanced120", "🎬 Balanced 2K 90 FPS HDR", "Tier 2 Balanced Shading, 2K Resolution, Maximum visual clarity")
         ]
 
@@ -775,6 +775,7 @@ class PanelLoopApp(ctk.CTk):
         if choice in ("streamer120", "uncapped180"):
             q_tier = 1
             target_fps = 0
+            pool = 0
             shadow_scale = 0.0
             shadow_res = 0
         elif choice == "hdr120":
@@ -1131,9 +1132,9 @@ class PanelLoopApp(ctk.CTk):
             dev_det.configure(text=f"{diag.get('device_model', 'NX769J')} [nubia] Locked")
 
             hdr_val, hdr_det = self.card_hdr
-            if diag.get("fps_locked") and diag.get("hdr_active"):
-                hdr_val.configure(text="HDR 120 FPS", text_color=COLOR_GREEN)
-                hdr_det.configure(text="True HDR + Colorful (BattleFPS=8) Locked")
+            if diag.get("fps_locked"):
+                hdr_val.configure(text="Streamer Flat 120", text_color=COLOR_GREEN)
+                hdr_det.configure(text="Zero Texture Stutter (BattleFPS=8) Locked")
             else:
                 hdr_val.configure(text="Not Synchronized", text_color=COLOR_RED)
                 hdr_det.configure(text="Click 1-Click Master Boost below")

@@ -649,46 +649,49 @@ class PanelLoopEngine:
         except Exception as e:
             self.log(f"GameLoop Registry sync failed: {e}", "ERROR")
 
-    def generate_usercustom_content(self, quality_tier=5, target_fps=0, pool_mb=2048, shadow_scale=0.5, shadow_res=512, style=2) -> str:
-        is_hdr = (quality_tier >= 4)
+    def generate_usercustom_content(self, quality_tier=1, target_fps=0, pool_mb=0, shadow_scale=0.0, shadow_res=0, style=2) -> str:
+        # Streamer Flat-Texture Mode: Zero texture streaming overhead & flat pastel buildings
+        is_flat = (pool_mb == 0 or quality_tier <= 2)
         cvars = [
             "r.PUBGVersion=5",
             f"r.UserQualitySetting={quality_tier}",
-            "r.MaterialQualityLevel=2" if is_hdr else "r.MaterialQualityLevel=1",
-            "r.MaterialQualitySuperHigh=1.0" if is_hdr else "r.MaterialQualitySuperHigh=0.0",
-            f"r.Streaming.PoolSize={pool_mb}",
-            "r.Streaming.UseFixedPoolSize=0",
-            "r.Streaming.FullyLoadUsedTextures=1",
+            "r.MaterialQualityLevel=0" if is_flat else "r.MaterialQualityLevel=2",
+            "r.MaterialQualitySuperHigh=0.0",
+            f"r.Streaming.PoolSize={0 if is_flat else pool_mb}",
+            "r.Streaming.UseFixedPoolSize=1",
+            "r.Streaming.FullyLoadUsedTextures=0" if is_flat else "r.Streaming.FullyLoadUsedTextures=1",
             "r.Streaming.MipBias=0",
             "r.Streaming.FramesForFullUpdate=1",
-            "r.Streaming.Boost=2.0",
+            "r.Streaming.Boost=1.0" if is_flat else "r.Streaming.Boost=2.0",
             "r.Streaming.LimitPoolSizeToVRAM=0",
-            "s.AsyncLoadingTime=5.0",
-            "s.PriorityAsyncLoadingExtraTime=5.0",
-            "s.LevelStreamingActorsUpdateTime=5.0",
+            "s.AsyncLoadingTime=1.0",
+            "s.PriorityAsyncLoadingExtraTime=1.0",
+            "s.LevelStreamingActorsUpdateTime=1.0",
             "r.Streaming.DefragDynamicBounds=1",
-            "r.MaxAnisotropy=16",
-            "r.StaticMeshLODDistanceScale=1.2",
+            "r.MaxAnisotropy=16" if not is_flat else "r.MaxAnisotropy=4",
+            "r.StaticMeshLODDistanceScale=1.0" if not is_flat else "r.StaticMeshLODDistanceScale=0.8",
             "foliage.LODDistanceScale=1.0",
-            "foliage.DensityScale=0.6" if not is_hdr else "foliage.DensityScale=0.7",
+            "foliage.DensityScale=0.25",
             "r.MobileContentScaleFactor=1.0",
-            "r.MobileHDR=1.0" if is_hdr else "r.MobileHDR=0.0",
-            "r.Mobile.SceneColorFormat=2.0" if is_hdr else "r.Mobile.SceneColorFormat=1.0",
-            "r.MobileSimpleShader=0" if is_hdr else "r.MobileSimpleShader=1",
-            "r.ShadowQuality=1" if (is_hdr and shadow_scale > 0) else "r.ShadowQuality=0",
-            "r.UserShadowSwitch=1" if (is_hdr and shadow_scale > 0) else "r.UserShadowSwitch=0",
-            f"r.Shadow.DistanceScale={shadow_scale}",
-            "r.Shadow.CSM.MaxMobileCascades=1" if (is_hdr and shadow_scale > 0) else "r.Shadow.CSM.MaxMobileCascades=0",
-            f"r.Shadow.MaxCSMResolution={shadow_res}",
-            "r.Mobile.EnablePPR=1.0" if is_hdr else "r.Mobile.EnablePPR=0.0",
-            "r.UserHDRSetting=2" if is_hdr else "r.UserHDRSetting=0",
+            "r.MobileHDR=1.0" if quality_tier >= 4 else "r.MobileHDR=0.0",
+            "r.Mobile.SceneColorFormat=2.0" if quality_tier >= 4 else "r.Mobile.SceneColorFormat=1.0",
+            "r.MobileSimpleShader=1" if is_flat else "r.MobileSimpleShader=0",
+            "r.ShadowQuality=0" if is_flat else ("r.ShadowQuality=1" if shadow_scale > 0 else "r.ShadowQuality=0"),
+            "r.UserShadowSwitch=0" if is_flat else ("r.UserShadowSwitch=1" if shadow_scale > 0 else "r.UserShadowSwitch=0"),
+            f"r.Shadow.DistanceScale={0.0 if is_flat else shadow_scale}",
+            f"r.Shadow.CSM.MaxMobileCascades={0 if is_flat else 1}",
+            f"r.Shadow.MaxCSMResolution={0 if is_flat else shadow_res}",
+            "r.Mobile.EnablePPR=1.0" if quality_tier >= 4 else "r.Mobile.EnablePPR=0.0",
+            "r.UserHDRSetting=2" if quality_tier >= 4 else "r.UserHDRSetting=0",
             f"r.ACESStyle={style}",
-            "r.DetailMode=2" if is_hdr else "r.DetailMode=1",
+            "r.DetailMode=0" if is_flat else "r.DetailMode=2",
             "r.DefaultFeature.AntiAliasing=0.0",
             "r.MobileMSAA=0.0",
             "r.MSAACount=0.0",
-            "r.ViewDistanceScale=1.5",
+            "r.ViewDistanceScale=1.2",
             "r.SkeletalMeshLODBias=0",
+            "fx.MaxCPUParticlesPerEmitter=50",
+            "p.ClothPhysics=0",
             "t.MaxFPS=0",
             "r.OneFrameThreadLag=0",
             "p.NetInterpolation=0.0",
@@ -701,8 +704,8 @@ class PanelLoopEngine:
         lines.append("")
         return "\r\n".join(lines)
 
-    def sync_usercustom_inodes(self, quality_tier=5, target_fps=0, pool_mb=2048, shadow_scale=0.5, shadow_res=512, style=2):
-        self.log("Locking UserCustom guest inodes with Texture Streaming & 120 FPS...", "INFO")
+    def sync_usercustom_inodes(self, quality_tier=1, target_fps=0, pool_mb=0, shadow_scale=0.0, shadow_res=0, style=2):
+        self.log("Locking UserCustom guest inodes with Streamer Flat Textures & 120 FPS...", "INFO")
         content = self.generate_usercustom_content(quality_tier, target_fps, pool_mb, shadow_scale, shadow_res, style)
 
         count = 0
@@ -725,7 +728,7 @@ class PanelLoopEngine:
                 self.log(f"Failed locking inode {inode}: {e}", "WARN")
         self.log(f"Synchronized and locked {count} UserCustom guest inodes.", "SUCCESS")
 
-    def patch_gvas_buffer(self, buf, quality_tier=5, fps_enum=8, style=2):
+    def patch_gvas_buffer(self, buf, quality_tier=1, fps_enum=8, style=2):
         targets = {
             'FPSLevel': fps_enum,
             'BattleFPS': fps_enum,
@@ -737,7 +740,7 @@ class PanelLoopEngine:
             'ManorRenderQuality': quality_tier,
             'GFBestQBattle': quality_tier,
             'GFBestQLobby': quality_tier,
-            'GraphicFavor': 4, # 4 = Customize mode (Allows HDR to render; 3 forces Super Smooth!)
+            'GraphicFavor': 4, # 4 = Customize mode (Allows 120 FPS & custom rendering without Super Smooth forced)
             'BattleRenderStyle': style,
             'LobbyRenderStyle': style,
             'nEnhancedLobbyQuality': 2
@@ -778,8 +781,8 @@ class PanelLoopEngine:
 
         return bytes(data), modified
 
-    def sync_gvas_saves(self, quality_tier=5, fps_enum=8, style=2):
-        q_label = "True HDR 120 FPS (Mathiya Tournament Setup)" if quality_tier >= 4 else "Smooth 120 FPS"
+    def sync_gvas_saves(self, quality_tier=1, fps_enum=8, style=2):
+        q_label = "Streamer Flat-Texture 120 FPS" if quality_tier <= 2 else "True HDR 120 FPS"
         self.log(f"Locking GVAS save inodes to {q_label} Colorful (DVR Stutter Disabled)...", "INFO")
         master_src = os.path.join(self.paths["rootfs_dir"], "7", "1c78")
         master_bytes = None
@@ -940,9 +943,9 @@ class PanelLoopEngine:
     # -------------------------------------------------------------------------
     # MASTER OPTIMIZATION RUNNER
     # -------------------------------------------------------------------------
-    def apply_master_esports_optimization(self, quality_tier=5, target_fps=0, pool_mb=2048, shadow_scale=0.5, shadow_res=512, style=2):
+    def apply_master_esports_optimization(self, quality_tier=1, target_fps=0, pool_mb=0, shadow_scale=0.0, shadow_res=0, style=2):
         self.log("==================================================================", "INFO")
-        self.log("APPLYING MATHIYA TOURNAMENT SETUP: UNIVERSAL ESPORTS OPTIMIZATION", "SUCCESS")
+        self.log("APPLYING STREAMER ZERO-LAG SETUP: FLAT TEXTURES & ZERO COMBAT STUTTER", "SUCCESS")
         self.log(f"CPU: {self.cpu['name']} ({self.cpu['threads']} Threads) | GPU: NVIDIA RTX 3090 | 180Hz Monitor", "INFO")
         self.log("==================================================================", "INFO")
 
@@ -967,7 +970,7 @@ class PanelLoopEngine:
         # 7. Sync UserCustom Inodes
         self.sync_usercustom_inodes(quality_tier=quality_tier, target_fps=target_fps, pool_mb=pool_mb, shadow_scale=shadow_scale, shadow_res=shadow_res, style=style)
 
-        # 8. Sync GVAS Saves (GraphicFavor=4 Customize Mode, BattleRenderQuality=5 True HDR)
+        # 8. Sync GVAS Saves (GraphicFavor=4 Customize Mode, BattleFPS=8 120 FPS Locked)
         self.sync_gvas_saves(quality_tier=quality_tier, fps_enum=8, style=style)
 
         # 9. Lock All Inodes Read-Only
@@ -978,7 +981,7 @@ class PanelLoopEngine:
         self.purge_standby_and_shader_cache()
 
         self.log("==================================================================", "INFO")
-        self.log("MATHIYA TOURNAMENT SETUP LOCKED: 120 FPS + TRUE HDR READY!", "SUCCESS")
+        self.log("STREAMER ZERO-LAG SETUP LOCKED: 120 FPS + FLAT TEXTURES READY!", "SUCCESS")
         self.log("==================================================================", "INFO")
         return True
 

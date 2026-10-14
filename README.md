@@ -1,12 +1,12 @@
-# ⚡ MATHIYA GAMELOOP PANEL v4.0
+# ⚡ MATHIYA GAMELOOP PANEL v4.1
 ### Universal Esports-Grade GameLoop & PUBG Mobile Full-Stack Optimization Suite
-#### *Mathiya Tournament Setup — Locked 120 FPS, True HDR & Zero-Lag Frame Pacing*
+#### *Streamer Flat-Texture 120 FPS & Zero Combat Lag Edition (Mathiya Tournament Setup)*
 
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011%20(64--Bit)-blue.svg)](https://microsoft.com/windows)
 [![GameLoop](https://img.shields.io/badge/GameLoop-Chinese%2064--Bit%20%7C%20Global%2064--Bit%20%7C%20Global%2032--Bit-success.svg)](https://gameloop.com)
 [![Status](https://img.shields.io/badge/Ban--Safe-100%25%20Client--Side-brightgreen.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
-[![Release](https://img.shields.io/badge/Release-v4.0.0%20Universal-cyan.svg)](https://github.com/Mathiyass/panel-loop-ultimate/releases)
+[![Release](https://img.shields.io/badge/Release-v4.1.0%20Universal-cyan.svg)](https://github.com/Mathiyass/panel-loop-ultimate/releases)
 
 ---
 
@@ -14,7 +14,7 @@
 
 **Mathiya GameLoop Panel (Mathiya Tournament Setup)** is a professional, low-level optimization dashboard and kernel pacing engine designed for competitive PUBG Mobile and GameLoop players.
 
-It eliminates micro-stutters, uncaps framerates to a locked **120 FPS**, synchronizes authentic **True HDR (Tier 5)** with full PBR building textures, enforces sub-millisecond (**0.50 ms**) Windows kernel timer pacing, optimizes network bullet hit-registration, and eliminates CPU core scheduling thrashing across **AMD Ryzen** and **Intel Core** processors.
+It eliminates combat micro-stutters, enables **Competitive Flat-Shaded Streamer Textures** (as used by top competitive streamers like MrBro to completely eliminate building pop-in and texture streaming hitching), locks framerates to **120 FPS**, synchronizes authentic **True HDR (Tier 5)** or **Flat-Streamer Smooth (Tier 1)**, enforces sub-millisecond (**0.50 ms**) Windows kernel timer pacing, optimizes network bullet hit-registration, and eliminates CPU core scheduling thrashing across **AMD Ryzen** and **Intel Core** processors.
 
 ---
 
