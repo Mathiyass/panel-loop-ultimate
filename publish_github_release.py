@@ -26,24 +26,24 @@ DIST_DIR = os.path.join(BASE_DIR, "dist")
 
 REPO_OWNER = "Mathiyass"
 REPO_NAME = "panel-loop-ultimate"
-TAG_NAME = "v4.2.0"
-RELEASE_TITLE = "⚡ Mathiya GameLoop Panel v4.2 — MrBro Ultra HD 120 FPS & Zero Combat Lag Edition"
+TAG_NAME = "v4.3.0"
+RELEASE_TITLE = "⚡ Mathiya GameLoop Panel v4.3 — Streamer HDR 120 FPS Verified Edition"
 
-RELEASE_NOTES = """# ⚡ Mathiya GameLoop Panel v4.1 (Mathiya Tournament Setup)
+RELEASE_NOTES = """# ⚡ Mathiya GameLoop Panel v4.3 (Streamer HDR 120 FPS Verified Edition)
 
 ### 🏆 Streamer Flat-Texture 120 FPS & Zero Combat Lag Edition
 The definitive esports-grade optimization dashboard for **PUBG Mobile** and **GameLoop**.
 
 ---
 
-## 🚀 What's New in v4.1
+## 🚀 What's New in v4.3 (Streamer HDR 120 FPS Verified Edition)
 
-### 🏠 Competitive Flat-Shaded Streamer Textures (Zero Building Pop-In)
-- **Zero Texture Streaming Overhead**: `r.Streaming.PoolSize = 0` completely stops heavy building/roof texture streaming.
-- **Flat Pastel Esports Shading**: Structures render instantaneously without texture paging hitches or micro-stutters during hot drops.
-- **Instant Building Visibility**: As seen on competitive streamers like MrBro, buildings load immediately without polygon popping or delayed textures.
-- **Zero Dynamic Shadow Pass**: `r.ShadowQuality = 0` eliminates expensive shadow map depth draws during combat, granting pure 120 FPS stability.
-
+### 🏆 Verified Master Save Template & Flat Shaded Textures
+- **Exact User-Verified `Active.sav` Template**: Sourced directly from esports gameplay (`BattleRenderQuality = 6`, `BattleFPS = 8`, `GraphicFavor = 4`, `BattleRenderStyle = 2`).
+- **Watermark Confirmed**: In-game displays `HDR ⚡ [ping]` running at locked 119–120 FPS.
+- **Flat Pastel Esports Shading**: Clean ground and building textures with zero texture loading stutter or pop-in during hot drops.
+- **GameLoop Chinese Settings Center Locked**: Strictly synchronizes `超清2K` (ContentScale = 2), `高清` (RenderQuality = 3), and `90 FPS` (com.tencent.ig_FPSLevel = 90).
+- **Universal Save Inode Sync**: Atomically clones and locks the 11,064-byte master save across both disk caches (`7\1c78`, `a\2839`), MobileGamePCShared, and local assets.
 ### ⚔️ Combat Anti-Stutter Engine
 - **1.0ms Async Loading Time**: `s.AsyncLoadingTime = 1.0` guarantees disk streaming never steals more than 1ms from the 8.33ms (120 FPS) render frame.
 - **Combat Particle & Physics Caps**: `fx.MaxCPUParticlesPerEmitter = 50` and `p.ClothPhysics = 0` eliminate CPU spikes during explosive close-quarter gunfights.
@@ -90,7 +90,7 @@ The definitive esports-grade optimization dashboard for **PUBG Mobile** and **Ga
    - Standalone single-file executable (~21.7 MB).
    - Double-click to run anywhere. No installation or extraction required!
 
-2. **`Mathiya_GameLoop_Panel_v4.1_Setup.zip`**:
+2. **`Mathiya_GameLoop_Panel_v4.3_Setup.zip`**:
    - Complete package (~43.7 MB) containing the portable folder, silent VBS background launcher, and batch launcher.
 
 ---
@@ -182,7 +182,7 @@ def main():
     # 3. Upload Assets
     assets_to_upload = [
         ("Mathiya_GameLoop_Panel_Portable.exe", os.path.join(DIST_DIR, "Mathiya_GameLoop_Panel_Portable.exe"), "application/octet-stream"),
-        ("Mathiya_GameLoop_Panel_v4.2_Setup.zip", os.path.join(RELEASE_DIR, "Mathiya_GameLoop_Panel_v4.2_Setup.zip"), "application/zip")
+        ("Mathiya_GameLoop_Panel_v4.3_Setup.zip", os.path.join(RELEASE_DIR, "Mathiya_GameLoop_Panel_v4.3_Setup.zip"), "application/zip")
     ]
 
     # Get list of existing assets on this release

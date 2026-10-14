@@ -308,7 +308,7 @@ class PanelLoopApp(ctk.CTk):
         self.hdr_profile_opt = ctk.CTkOptionMenu(
             right_box,
             values=[
-                "🏆 MrBro Ultra HD 120",
+                "🏆 Streamer HDR 120 (Verified)",
                 "⚡ Tournament HDR 120",
                 "🚀 Streamer Flat 120"
             ],
@@ -317,10 +317,10 @@ class PanelLoopApp(ctk.CTk):
             fg_color="#141A26",
             button_color=COLOR_CYAN,
             button_hover_color=COLOR_CYAN_HOVER,
-            width=185,
+            width=215,
             height=32
         )
-        self.hdr_profile_opt.set("🏆 MrBro Ultra HD 120")
+        self.hdr_profile_opt.set("🏆 Streamer HDR 120 (Verified)")
         self.hdr_profile_opt.pack(side="left", padx=(0, 8))
 
         # Sound FX Toggle
@@ -379,9 +379,9 @@ class PanelLoopApp(ctk.CTk):
             self.btn_sound.configure(text="🔇 MUTE", text_color=COLOR_MUTED)
 
     def _on_header_profile_change(self, val):
-        if "MrBro" in val or "Ultra" in val:
-            self._apply_preset_direct(quality_tier=5, target_fps=0, pool_mb=2048, shadow_scale=1.0, shadow_res=1024)
-        elif "HDR" in val:
+        if "Verified" in val or "Streamer HDR" in val or "MrBro" in val:
+            self._apply_preset_direct(quality_tier=6, target_fps=0, pool_mb=2048, shadow_scale=1.0, shadow_res=1024)
+        elif "Tournament" in val or "HDR" in val:
             self._apply_preset_direct(quality_tier=5, target_fps=0, pool_mb=2048, shadow_scale=0.5, shadow_res=512)
         elif "Flat" in val or "Streamer" in val:
             self._apply_preset_direct(quality_tier=1, target_fps=0, pool_mb=100, shadow_scale=0.0, shadow_res=0)
@@ -553,7 +553,7 @@ class PanelLoopApp(ctk.CTk):
 
         btn_master = ctk.CTkButton(
             action_bar,
-            text="⚡ APPLY MRBRO ULTRA HD 120 FPS (ZERO COMBAT LAG)",
+            text="⚡ APPLY VERIFIED STREAMER HDR 120 FPS (ZERO COMBAT LAG)",
             command=self.run_master_boost,
             font=ctk.CTkFont(family="Segoe UI Variable", size=13, weight="bold"),
             fg_color=COLOR_CYAN,
@@ -1133,8 +1133,8 @@ class PanelLoopApp(ctk.CTk):
 
             hdr_val, hdr_det = self.card_hdr
             if diag.get("fps_locked"):
-                hdr_val.configure(text="Ultra HD 120", text_color=COLOR_GREEN)
-                hdr_det.configure(text="MrBro Setup (BattleFPS=8 | Q=5) Locked")
+                hdr_val.configure(text="Streamer HDR 120", text_color=COLOR_GREEN)
+                hdr_det.configure(text="Verified Setup (BattleFPS=8 | Q=6) Locked")
             else:
                 hdr_val.configure(text="Not Synchronized", text_color=COLOR_RED)
                 hdr_det.configure(text="Click 1-Click Master Boost below")

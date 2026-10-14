@@ -1,12 +1,12 @@
-# ⚡ MATHIYA GAMELOOP PANEL v4.2
+# ⚡ MATHIYA GAMELOOP PANEL v4.3
 ### Universal Esports-Grade GameLoop & PUBG Mobile Full-Stack Optimization Suite
-#### *MrBro Ultra HD 120 FPS & Zero Combat Lag Edition (Mathiya Tournament Setup)*
+#### *Streamer HDR 120 FPS Verified Edition (Mathiya Tournament Setup)*
 
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011%20(64--Bit)-blue.svg)](https://microsoft.com/windows)
 [![GameLoop](https://img.shields.io/badge/GameLoop-Chinese%2064--Bit%20%7C%20Global%2064--Bit%20%7C%20Global%2032--Bit-success.svg)](https://gameloop.com)
 [![Status](https://img.shields.io/badge/Ban--Safe-100%25%20Client--Side-brightgreen.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
-[![Release](https://img.shields.io/badge/Release-v4.2.0%20Universal-cyan.svg)](https://github.com/Mathiyass/panel-loop-ultimate/releases)
+[![Release](https://img.shields.io/badge/Release-v4.3.0%20Universal-cyan.svg)](https://github.com/Mathiyass/panel-loop-ultimate/releases)
 
 ---
 

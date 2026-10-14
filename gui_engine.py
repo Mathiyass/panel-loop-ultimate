@@ -395,7 +395,7 @@ class PanelLoopEngine:
                         idx = d.find(b"IntProperty\x00", pos, pos + 80)
                         if idx != -1:
                             val = struct.unpack("<i", d[idx + 12 + 8 + 1: idx + 12 + 8 + 5])[0]
-                            diag["hdr_active"] = (val == 5)
+                            diag["hdr_active"] = (val in [5, 6])
                     pos = d.find(b"DeathPlaybackSwitch\x00")
                     if pos != -1:
                         idx = d.find(b"BoolProperty\x00", pos, pos + 80)
@@ -728,25 +728,25 @@ class PanelLoopEngine:
                 self.log(f"Failed locking inode {inode}: {e}", "WARN")
         self.log(f"Synchronized and locked {count} UserCustom guest inodes.", "SUCCESS")
 
-    def patch_gvas_buffer(self, buf, quality_tier=1, fps_enum=8, style=2):
+    def patch_gvas_buffer(self, buf, quality_tier=6, fps_enum=8, style=2):
         targets = {
             'FPSLevel': fps_enum,
             'BattleFPS': fps_enum,
             'LobbyFPS': fps_enum,
             'MainCityFPS': fps_enum,
             'BattleRenderQuality': quality_tier,
-            'LobbyRenderQuality': quality_tier,
-            'MainCityRenderQuality': quality_tier,
-            'ManorRenderQuality': quality_tier,
-            'GFBestQBattle': quality_tier,
-            'GFBestQLobby': quality_tier,
+            'LobbyRenderQuality': 5,
+            'MainCityRenderQuality': 5,
+            'ManorRenderQuality': 5,
+            'GFBestQBattle': 4,
+            'GFBestQLobby': 5,
             'GraphicFavor': 4, # 4 = Customize mode (Allows 120 FPS & custom rendering without Super Smooth forced)
             'BattleRenderStyle': style,
             'LobbyRenderStyle': style,
-            'nEnhancedLobbyQuality': 0
+            'nEnhancedLobbyQuality': 2
         }
         bool_targets = {
-            'HasGraphicsSeparateConfig': 0,
+            'HasGraphicsSeparateConfig': 1,
             'DeathPlaybackSwitch': 0,
             'bRecordWonderfulReplayOpen': 0,
             'bResetDeathPlaybackSwitch': 0,
@@ -781,12 +781,17 @@ class PanelLoopEngine:
 
         return bytes(data), modified
 
-    def sync_gvas_saves(self, quality_tier=1, fps_enum=8, style=2):
-        q_label = "Streamer Flat-Texture 120 FPS" if quality_tier <= 2 else "True HDR 120 FPS"
-        self.log(f"Locking GVAS save inodes to {q_label} Colorful (DVR Stutter Disabled)...", "INFO")
+    def sync_gvas_saves(self, quality_tier=6, fps_enum=8, style=2):
+        self.log(f"Locking GVAS save inodes to Verified Streamer HDR 120 FPS (Quality={quality_tier})...", "INFO")
+        master_template = os.path.join(LOCAL_OPT_DIR, "Active.sav")
         master_src = os.path.join(self.paths["rootfs_dir"], "7", "1c78")
         master_bytes = None
-        if os.path.exists(master_src):
+        
+        if os.path.exists(master_template):
+            with open(master_template, "rb") as f:
+                raw = f.read()
+            master_bytes, _ = self.patch_gvas_buffer(raw, quality_tier, fps_enum, style)
+        elif os.path.exists(master_src):
             unlock_path(master_src)
             with open(master_src, "rb") as f:
                 raw = f.read()
@@ -795,7 +800,8 @@ class PanelLoopEngine:
         targets = self.paths["gvas_save_inodes"] + [
             os.path.join(self.paths["shared_dir"], "Active.sav"),
             os.path.join(self.paths["shared_dir"], "SettingConfig_Slot.sav"),
-            os.path.join(LOCAL_OPT_DIR, "Active.sav")
+            os.path.join(LOCAL_OPT_DIR, "Active.sav"),
+            os.path.join(LOCAL_OPT_DIR, "SettingConfig_Slot.sav")
         ]
 
         count = 0
@@ -943,9 +949,9 @@ class PanelLoopEngine:
     # -------------------------------------------------------------------------
     # MASTER OPTIMIZATION RUNNER
     # -------------------------------------------------------------------------
-    def apply_master_esports_optimization(self, quality_tier=5, target_fps=0, pool_mb=2048, shadow_scale=1.0, shadow_res=1024, style=2):
+    def apply_master_esports_optimization(self, quality_tier=6, target_fps=0, pool_mb=2048, shadow_scale=1.0, shadow_res=1024, style=2):
         self.log("==================================================================", "INFO")
-        self.log("APPLYING MRBRO ULTRA HD 120 FPS SETUP (TRUE ULTRA HD + ZERO COMBAT LAG)", "SUCCESS")
+        self.log("APPLYING VERIFIED STREAMER HDR 120 FPS SETUP (MRBRO VERIFIED + ZERO COMBAT LAG)", "SUCCESS")
         self.log(f"CPU: {self.cpu['name']} ({self.cpu['threads']} Threads) | GPU: NVIDIA RTX 3090 | 180Hz Monitor", "INFO")
         self.log("==================================================================", "INFO")
 

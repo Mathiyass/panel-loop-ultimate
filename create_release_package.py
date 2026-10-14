@@ -15,7 +15,7 @@ DIST_DIR = os.path.join(BASE_DIR, "dist")
 RELEASE_DIR = os.path.join(BASE_DIR, "release")
 os.makedirs(RELEASE_DIR, exist_ok=True)
 
-ZIP_PATH = os.path.join(RELEASE_DIR, "Mathiya_GameLoop_Panel_v4.2_Setup.zip")
+ZIP_PATH = os.path.join(RELEASE_DIR, "Mathiya_GameLoop_Panel_v4.3_Setup.zip")
 PORTABLE_EXE = os.path.join(DIST_DIR, "Mathiya_GameLoop_Panel_Portable.exe")
 ONEDIR_FOLDER = os.path.join(DIST_DIR, "MathiyaGameLoopPanel")
 
@@ -88,7 +88,7 @@ https://github.com/Mathiyass/panel-loop-ultimate
 
     # Also record hash file
     with open(ZIP_PATH + ".sha256", "w") as f:
-        f.write(f"{hash_hex}  Mathiya_GameLoop_Panel_v4.2_Setup.zip\n")
+        f.write(f"{hash_hex}  Mathiya_GameLoop_Panel_v4.3_Setup.zip\n")
 
     return ZIP_PATH
 
