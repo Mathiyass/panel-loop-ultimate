@@ -390,7 +390,7 @@ class PanelLoopEngine:
             winreg.CloseKey(k)
             diag["device_model"] = model
             diag["phone_device"] = phone
-            diag["settings_center"] = "2K | 高清 (HD) | 90 FPS" if (scale == 2 and quality == 3 and fps == 90) else f"Scale={scale}, Q={quality}, FPS={fps}"
+            diag["settings_center"] = "2K | 高清 (HD) | 90 FPS" if (scale == 2 and quality in (2, 3) and fps == 90) else f"Scale={scale}, Q={quality}, FPS={fps}"
         except Exception:
             pass
 
@@ -627,19 +627,24 @@ class PanelLoopEngine:
             k = winreg.CreateKey(winreg.HKEY_CURRENT_USER, REG_PATH)
 
             # Apply 90 FPS & HD graphics across ALL supported packages to match Chinese Settings Center
-            for pkg in SUPPORTED_PACKAGES:
-                winreg.SetValueEx(k, f"{pkg}_ContentScale", 0, winreg.REG_DWORD, 2)
-                winreg.SetValueEx(k, f"{pkg}_RenderQuality", 0, winreg.REG_DWORD, 3) # 高清 (HD / True HDR)
-                winreg.SetValueEx(k, f"{pkg}_FPSLevel", 0, winreg.REG_DWORD, 90) # Strictly match GameLoop 90 FPS UI
+            for sub in [REG_PATH, r"Software\Tencent\GameLoop"]:
+                try:
+                    with winreg.CreateKey(winreg.HKEY_CURRENT_USER, sub) as k_target:
+                        for pkg in SUPPORTED_PACKAGES:
+                            winreg.SetValueEx(k_target, f"{pkg}_ContentScale", 0, winreg.REG_DWORD, 2)
+                            winreg.SetValueEx(k_target, f"{pkg}_RenderQuality", 0, winreg.REG_DWORD, 2) # 高清 (HD in GameLoop UI)
+                            winreg.SetValueEx(k_target, f"{pkg}_FPSLevel", 0, winreg.REG_DWORD, 90)     # Strictly match GameLoop 90 FPS UI
+                except Exception:
+                    pass
 
             # Also mirror to HKLM paths if accessible
             for hive in [winreg.HKEY_LOCAL_MACHINE]:
-                for sub in [REG_PATH, r"Software\WOW6432Node\Tencent\MobileGamePC"]:
+                for sub in [REG_PATH, r"Software\Tencent\GameLoop", r"Software\WOW6432Node\Tencent\MobileGamePC", r"Software\WOW6432Node\Tencent\GameLoop"]:
                     try:
                         with winreg.CreateKey(hive, sub) as hk:
                             for pkg in SUPPORTED_PACKAGES:
                                 winreg.SetValueEx(hk, f"{pkg}_ContentScale", 0, winreg.REG_DWORD, 2)
-                                winreg.SetValueEx(hk, f"{pkg}_RenderQuality", 0, winreg.REG_DWORD, 3)
+                                winreg.SetValueEx(hk, f"{pkg}_RenderQuality", 0, winreg.REG_DWORD, 2)
                                 winreg.SetValueEx(hk, f"{pkg}_FPSLevel", 0, winreg.REG_DWORD, 90)
                     except Exception:
                         pass
