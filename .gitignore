@@ -3,15 +3,35 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Caches & Logs
+# PyInstaller build artifacts
+build/
+dist/
+*.spec
+
+# Release artifacts directory
+release/
+
+# Temporary logs, caches & dumps
 *.log
+*.dmp
 gl_temp_inspect/
-
-# Media and scratch test captures
 video_analysis/
-*.png
 
-# OS metadata
+# Windows OS metadata
 Thumbs.db
 Desktop.ini
 .DS_Store
+
+# Temporary scratch test files
+1-Click
+Device
+GPU
+In-Game
+Settings
+*.bak
+
+# Ensure critical assets and configuration files are explicitly tracked
+!assets/
+!assets/*.ico
+!assets/*.png
+!gl_optimized_files/

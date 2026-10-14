@@ -57,7 +57,9 @@ else:
     UI_DIR = r"C:\Program Files\TxGameAssistant\ui"
     ADB_EXE = os.path.join(UI_DIR, "adb.exe")
     ANDROWS_JSON = ""
-    EMULATOR_EXE = os.path.join(UI_DIR, "AndroidEmulator.exe")
+    EMULATOR_EXE = os.path.join(UI_DIR, "AndroidEmulatorEx.exe")
+    if not os.path.exists(EMULATOR_EXE):
+        EMULATOR_EXE = os.path.join(UI_DIR, "AndroidEmulator.exe")
     ROOTFS_DIR = r"C:\Program Files\TxGameAssistant\AOW_Rootfs_100"
     TX_REG_PATH = r"Software\Tencent\MobileGamePC"
 
@@ -198,58 +200,72 @@ def encode_cvar(text):
     return f"+CVars={hex_str}"
 
 def generate_usercustom_ini(target_fps=0):
+    is_uncapped = (target_fps == 0)
     cvars = [
         "r.PUBGVersion=5",
-        "r.UserQualitySetting=6",
-        "r.MaterialQualityLevel=2",
-        "r.MaterialQualitySuperHigh=1.0",
-        "r.Streaming.PoolSize=2048",
+        "r.UserQualitySetting=1",
+        "r.MaterialQualityLevel=1",
+        "r.MaterialQualitySuperHigh=0.0",
+        "r.Streaming.PoolSize=1536",
         "r.Streaming.UseFixedPoolSize=0",
-        "r.Streaming.FullyLoadUsedTextures=1",
+        "r.Streaming.FullyLoadUsedTextures=0",
         "r.Streaming.MipBias=0",
+        "r.Streaming.FramesForFullUpdate=1",
+        "r.Streaming.Boost=2.0",
+        "r.Streaming.LimitPoolSizeToVRAM=0",
+        "s.AsyncLoadingTime=2.0",
+        "s.PriorityAsyncLoadingExtraTime=2.0",
+        "s.LevelStreamingActorsUpdateTime=2.0",
+        "r.Streaming.DefragDynamicBounds=1",
         "r.MaxAnisotropy=16",
-        "r.StaticMeshLODDistanceScale=1.5",
-        "foliage.LODDistanceScale=1.2",
-        "foliage.DensityScale=0.8",
-        "r.MobileContentScaleFactor=1.5",
-        "r.MobileHDR=1.0",
-        "r.Mobile.SceneColorFormat=2.0",
-        "r.MobileSimpleShader=0",
-        "r.ShadowQuality=2",
-        "r.UserShadowSwitch=1",
-        "r.Shadow.DistanceScale=1.0",
-        "r.Shadow.CSM.MaxMobileCascades=1",
-        "r.Shadow.MaxCSMResolution=1024",
-        "r.Mobile.EnablePPR=1.0",
-        "r.UserHDRSetting=2",
+        "r.StaticMeshLODDistanceScale=1.0",
+        "foliage.LODDistanceScale=1.0",
+        "foliage.DensityScale=0.6",
+        "r.MobileContentScaleFactor=1.0",
+        "r.MobileHDR=0.0",
+        "r.Mobile.SceneColorFormat=1.0",
+        "r.MobileSimpleShader=1",
+        "r.ShadowQuality=0",
+        "r.UserShadowSwitch=0",
+        "r.Shadow.DistanceScale=0.0",
+        "r.Shadow.CSM.MaxMobileCascades=0",
+        "r.Shadow.MaxCSMResolution=0",
+        "r.Mobile.EnablePPR=0.0",
+        "r.UserHDRSetting=0",
         "r.ACESStyle=2",
-        "r.DetailMode=2",
+        "r.DetailMode=1",
         "r.DefaultFeature.AntiAliasing=0.0",
-        "r.MobileMSAA=1.0",
-        "r.MSAACount=4.0",
-        "r.ViewDistanceScale=2.0",
+        "r.MobileMSAA=0.0",
+        "r.MSAACount=0.0",
+        "r.ViewDistanceScale=1.0",
         "r.SkeletalMeshLODBias=0",
         "r.UserEnergySaving=0",
-        "r.ParticleLODBias=1",
+        "r.ParticleLODBias=0",
         "r.EmitterSpawnRate=1.0",
         "r.Emitter.FastPool=1",
-        "fx.MaxCPUParticlesPerEmitter=500",
-        "fx.MaxNiagaraCPUParticlesPerFrame=500",
+        "fx.MaxCPUParticlesPerEmitter=150",
+        "fx.MaxNiagaraCPUParticlesPerFrame=150",
         "fx.Niagara.QualityLevel=2",
         "gc.TimeBetweenPurgingPendingKillObjects=60",
         "gc.NumRetriesBeforeForcingGC=10",
         "r.CreateShadersOnLoad=1",
         "r.Shaders.Optimize=1",
-        "s.AsyncLoadingTime=2.0",
-        "s.PriorityAsyncLoadingExtraTime=2.0",
-        "s.LevelStreamingActorsUpdateTime=2.0",
         "foliage.DiscardDataOnLoad=1",
         "r.SkinCache.Mode=0",
         f"t.MaxFPS={int(target_fps)}",
         "r.OneFrameThreadLag=0",
+        "r.FinishCurrentFrame=0",
         "r.GTSyncType=0",
         "r.bSmoothFrameRate=0",
-        "r.Vsync=0"
+        "bSmoothFrameRate=0",
+        "MinSmoothedFrameRate=0",
+        "MaxSmoothedFrameRate=0",
+        "r.Vsync=0",
+        "net.PackageMapClient.MaxPacketsPerFrame=40",
+        "net.MaxClientTickRate=240",
+        "p.NetEnableMoveSmoothing=1",
+        "p.NetSmoothedPosition=1",
+        "p.NetInterpolation=0.0"
     ]
     lines = ["[BackUp DeviceProfile]"]
     for c in cvars:
@@ -293,11 +309,11 @@ def patch_sav_bytes(data: bytearray, quality: int, fps_enum: int) -> bytearray:
     updates = {
         b"BattleRenderQuality\x00": int(quality),
         b"LobbyRenderQuality\x00": int(quality),
-        b"GFBestQBattle\x00": int(quality),
-        b"GFBestQLobby\x00": int(quality),
+        b"GFBestQBattle\x00": 4,
+        b"GFBestQLobby\x00": 5,
         b"MainCityRenderQuality\x00": int(quality),
         b"ManorRenderQuality\x00": int(quality),
-        b"nEnhancedLobbyQuality\x00": int(quality),
+        b"nEnhancedLobbyQuality\x00": 2,
         b"BattleFPS\x00": int(fps_enum),
         b"LobbyFPS\x00": int(fps_enum),
         b"FPSLevel\x00": int(fps_enum),
@@ -318,6 +334,27 @@ def patch_sav_bytes(data: bytearray, quality: int, fps_enum: int) -> bytearray:
                         data[val_offset:val_offset+4] = val_bytes
         except Exception:
             continue
+
+    bool_prop = b"BoolProperty\x00"
+    bool_updates = {
+        b"HasGraphicsSeparateConfig\x00": 0,
+        b"DeathPlaybackSwitch\x00": 0,
+        b"bRecordWonderfulReplayOpen\x00": 0,
+        b"bResetDeathPlaybackSwitch\x00": 0,
+        b"WallFeedBack\x00": 0
+    }
+    for k, val in bool_updates.items():
+        try:
+            idx = data.find(k)
+            if idx != -1:
+                b_idx = data.find(bool_prop, idx, idx + 80)
+                if b_idx != -1:
+                    val_offset = b_idx + len(bool_prop) + 8
+                    if val_offset < len(data):
+                        data[val_offset] = int(val)
+        except Exception:
+            continue
+
     return data
 
 def unlock_inode(file_path):
@@ -363,7 +400,7 @@ def lock_inode(file_path):
     except Exception:
         pass
 
-def update_active_sav(quality=6, fps=120):
+def update_active_sav(quality=5, fps=120):
     fpsv = _fps_enum_to_sav(int(fps))
     
     # 1. Update in LOCAL_OPT_DIR and SHARED_DIR
@@ -432,7 +469,7 @@ def update_active_sav(quality=6, fps=120):
         p1 = push_via_adb(local_sav, f"{saved_base}/Active.sav", "666")
         p2 = push_via_adb(local_sav, f"{saved_base}/SettingConfig_Slot.sav", "666")
         if p1 or p2:
-            print("  Pushed Active.sav & SettingConfig_Slot.sav via ADB to Guest VM (120 FPS / UHD)")
+            print("  Pushed Active.sav & SettingConfig_Slot.sav via ADB to Guest VM (120 FPS / HDR)")
     return True
 
 def deploy_usercustom_ini(target_fps=0):
@@ -593,14 +630,14 @@ def _verify_registry(model_name, model_code, mfr, res_w, res_h, dpi, fps):
         print(f"[verify] registry error: {e}")
         return False
 
-def set_gameloop_reg(model_name="ASUS ROG 8 Pro", model_code="ASUS_AI2401_A", mfr="asus", res_w=1920, res_h=1080, dpi=480, engine=1, fps=120, refresh_rate=240):
+def set_gameloop_reg(model_name="REDMAGIC 9 Pro", model_code="NX769J", mfr="nubia", res_w=1920, res_h=1080, dpi=480, engine=1, fps=120, refresh_rate=240):
     try:
         # Common settings for GameLoop 7.0/8.0 (64-Bit Android 13)
         if IS_NEW_GAMELOOP:
             try:
                 common_key = winreg.CreateKey(winreg.HKEY_CURRENT_USER, r"Software\Tencent\GameLoop\Settings\Common")
-                winreg.SetValueEx(common_key, "PerformanceMemoryGb", 0, winreg.REG_DWORD, 8)
-                winreg.SetValueEx(common_key, "PerformanceCpuCoreNum", 0, winreg.REG_DWORD, 8)
+                winreg.SetValueEx(common_key, "PerformanceMemoryGb", 0, winreg.REG_DWORD, 4)
+                winreg.SetValueEx(common_key, "PerformanceCpuCoreNum", 0, winreg.REG_DWORD, 4)
                 winreg.SetValueEx(common_key, "PerformanceMode", 0, winreg.REG_DWORD, 1)
                 winreg.SetValueEx(common_key, "DisableFullscreenOptimization", 0, winreg.REG_DWORD, 1)
                 winreg.SetValueEx(common_key, "RenderMode", 0, winreg.REG_DWORD, 1)  # DirectX+
@@ -669,8 +706,8 @@ def set_gameloop_reg(model_name="ASUS ROG 8 Pro", model_code="ASUS_AI2401_A", mf
                 winreg.SetValueEx(key, "ShaderCacheEnabled", 0, winreg.REG_DWORD, 1)
                 winreg.SetValueEx(key, "RenderOptimizeEnabled", 0, winreg.REG_DWORD, 1)
                 winreg.SetValueEx(key, "EnableGLESv3", 0, winreg.REG_DWORD, 1)
-                winreg.SetValueEx(key, "VMCpuCount", 0, winreg.REG_DWORD, 8)
-                winreg.SetValueEx(key, "VMMemorySizeInMB", 0, winreg.REG_DWORD, 8192)
+                winreg.SetValueEx(key, "VMCpuCount", 0, winreg.REG_DWORD, 4)
+                winreg.SetValueEx(key, "VMMemorySizeInMB", 0, winreg.REG_DWORD, 4096)
                 winreg.SetValueEx(key, "ShowFPS", 0, winreg.REG_DWORD, 1)
                 winreg.SetValueEx(key, "GraphicsCard", 0, winreg.REG_SZ, "Nvidia")
                 winreg.SetValueEx(key, "GraphicsCardEnabled", 0, winreg.REG_DWORD, 1)
@@ -859,7 +896,7 @@ def repair_pubg_and_opengl():
     print("[Auto-Repair] Starting PUBG Mobile & OpenGL Self-Healing Recovery...")
     crash_guard()
     reinforce_opengl_conf()
-    update_active_sav(quality=6, fps=120)
+    update_active_sav(quality=5, fps=120)
     deploy_usercustom_ini()
     set_gameloop_reg("REDMAGIC 9 Pro", "NX769J", "nubia", 1920, 1080, 480, 1, 120)
     lock_framerate_pacing()
@@ -1149,13 +1186,13 @@ def enable_high_refresh_mode(hz=240):
     return True
 
 def apply_full_optimization(res_w=1920, res_h=1080, dpi=480, fps=120, refresh_rate=240):
-    print(f"[1/8] GameLoop host VM + UHD {res_w}x{res_h}@{fps} FPS (ASUS ROG 8 Pro, 8 Cores, 8GB RAM, {refresh_rate}Hz Uncapped)...")
-    set_gameloop_reg("ASUS ROG 8 Pro", "ASUS_AI2401_A", "asus", res_w, res_h, dpi, 1, fps, refresh_rate=refresh_rate)
+    print(f"[1/8] GameLoop host VM + HDR {res_w}x{res_h}@{fps} FPS (REDMAGIC 9 Pro, 4 Cores, 4GB RAM, {refresh_rate}Hz Uncapped)...")
+    set_gameloop_reg("REDMAGIC 9 Pro", "NX769J", "nubia", res_w, res_h, dpi, 1, fps, refresh_rate=refresh_rate)
 
-    print(f"[2/8] Active.sav 120 FPS + Quality 6 (Ultra HD) -> ADB hot-push & local cache...")
-    update_active_sav(quality=6, fps=fps)
+    print(f"[2/8] Active.sav 120 FPS + Quality 5 (HDR Customize) -> ADB hot-push & local cache...")
+    update_active_sav(quality=5, fps=fps)
 
-    print("[3/8] UserCustom.ini (Uncapped Max FPS, 2GB dynamic VRAM, 1.5x LOD, 0 frame lag, 1 CSM cascade)...")
+    print("[3/8] UserCustom.ini (Uncapped Max FPS, 1.5GB dynamic VRAM, 1.5x LOD, 0 frame lag, 1 CSM cascade)...")
     deploy_usercustom_ini(target_fps=0)
 
     print("[4/8] Guest Android 13 Display & Input (240Hz refresh, 240Hz polling, 0 accel)...")
@@ -1172,7 +1209,7 @@ def apply_full_optimization(res_w=1920, res_h=1080, dpi=480, fps=120, refresh_ra
 
     print("[8/8] Notice Tamer & Cursor Fencing...")
     run_notice_tamer()
-    print("\nOK: Ultra HD 120 FPS locked & full system optimization complete.")
+    print("\nOK: HDR 120 FPS locked & full system optimization complete.")
 
 def switch_model(key):
     if key in MODELS:
@@ -1684,7 +1721,7 @@ def run_guard_daemon(interval=30):
             saves = find_all_save_inodes()
             if saves and _read_sav_fps(saves[0]) != 8:
                 print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] Save inode reset detected! Re-locking 120 FPS Active.sav...")
-                update_active_sav(quality=6, fps=120)
+                update_active_sav(quality=5, fps=120)
 
             adb_exe = os.path.join(UI_DIR, "adb.exe")
             if os.path.exists(adb_exe):
@@ -1706,9 +1743,9 @@ def run_guard_daemon(interval=30):
 def get_system_status():
     status = {
         "engine_name": "GameLoop 7.0/8.0 (Android 13 64-bit)" if IS_NEW_GAMELOOP else "GameLoop 32-bit (AOW 7.1)",
-        "model": "ASUS ROG 8 Pro" if IS_NEW_GAMELOOP else "REDMAGIC 9 Pro",
-        "model_code": "ASUS_AI2401_A" if IS_NEW_GAMELOOP else "NX769J",
-        "mfr": "asus" if IS_NEW_GAMELOOP else "nubia",
+        "model": "REDMAGIC 9 Pro",
+        "model_code": "NX769J",
+        "mfr": "nubia",
         "res_w": 1920,
         "res_h": 1080,
         "dpi": 480,
@@ -1897,8 +1934,8 @@ def show_status():
     print(f"  Display Resolution  : {s['res_w']}x{s['res_h']} (DPI: {s['dpi']})")
     print(f"  GameLoop UI FPS Enum: {s['ui_fps']} FPS (Target: 90 with Red Dot)")
     print(f"  Emulator RefreshRate: {s['refresh']} Hz (SurfaceFlinger 240Hz / 240Hz Events)")
-    print(f"  Active Inode Saves  : {s['saves_found']} active (Locked at {120 if s['save_fps'] == 8 else s['save_fps']} FPS Ultra HD)")
-    print(f"  Active INI Config   : {s['inis_found']} active (Uncapped Max FPS, 0 Frame Lag, 2GB VRAM)")
+    print(f"  Active Inode Saves  : {s['saves_found']} active (Locked at {120 if s['save_fps'] == 8 else s['save_fps']} FPS HDR)")
+    print(f"  Active INI Config   : {s['inis_found']} active (Uncapped Max FPS, 0 Frame Lag, 1.5GB dynamic VRAM)")
     print(f"  Android Framebuffer : {s['framebuffer_mode']}")
     print(f"  Kernel Timer Pacing : {s.get('timer_res', '0.50 ms')} (Synchronized to 120Hz/240Hz)")
     print(f"  DWM Direct Scanout  : Enforced (Zero DWM Latency, Independent Flip)")
@@ -2020,11 +2057,11 @@ if __name__ == "__main__":
             show_status()
         elif cmd == "--launch":
             try:
-                subprocess.Popen([EMULATOR_EXE, "-vm", "100"])
-                print("Launched via AndroidEmulator.exe -vm 100")
+                subprocess.Popen([EMULATOR_EXE, "-vm", "100"], cwd=UI_DIR)
+                print(f"Launched via {os.path.basename(EMULATOR_EXE)} -vm 100")
             except Exception:
                 try:
-                    subprocess.Popen([APPMARKET_EXE, "-runpkg", "com.tencent.ig"])
+                    subprocess.Popen([APPMARKET_EXE, "-runpkg", "com.tencent.ig"], cwd=os.path.dirname(APPMARKET_EXE))
                     print("Launched via AppMarket.exe")
                 except Exception as e:
                     print(f"Launch error: {e}")

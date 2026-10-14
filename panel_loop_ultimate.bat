@@ -38,7 +38,7 @@ echo   Hardware Profile: AMD Ryzen 7 5800X  ^|  NVIDIA RTX 3090 24GB  ^|  180Hz 
 echo.
 %PY_CMD% tac_engine.py --status
 echo.
-echo   [1] 1-Click Ultimate Optimization (Tier 6 UHD + 120 FPS + GameLoop 90 UI Sync)
+echo   [1] 1-Click Ultimate Optimization (HDR + 120 FPS + GameLoop 90 UI Sync)
 echo   [2] Launch PUBG Mobile Directly
 echo   [3] Switch Device Model (REDMAGIC 9 Pro / ROG 8 Pro / S24 Ultra / Xiaomi)
 echo   [4] Resolution Switcher (Native 1080p FHD / 2K 1440p / iPad 4:3 1440x1080)
@@ -60,10 +60,14 @@ echo   [19] Keymap Protection & Backup (Lock Custom Controls)
 echo   [20] Launch Standalone Auto-Guard Daemon (Background Watchdog)
 echo   [21] 180Hz / 240 FPS Ultra-Refresh Mode (UE4 Uncapped + VM Tuning)
 echo   [22] Lossless Scaling 240 FPS Configuration Guide & Setup
+echo   [23] Install & Configure GameLoop Chinese 64-Bit (Video Guide)
+echo   [24] Configure GameLoop in NVIDIA App (RTX 3090 Driver Profile)
+echo   [25] Fast Texture Streaming & In-Game Stutter Fix (8GB VRAM + 15ms Async)
+echo   [26] Master Sync & Lock All Settings (Settings Center + 1080p + 4-Core CPU)
 echo   [0] Exit
 echo.
-echo ===============================================================================
-set /p "CHOICE=Select an option [0-22]: "
+===============================================================================
+set /p "CHOICE=Select an option [0-26]: "
 
 if "%CHOICE%"=="1" goto OPTIMIZE_UHD
 if "%CHOICE%"=="2" goto LAUNCH_GAME
@@ -87,21 +91,25 @@ if "%CHOICE%"=="19" goto PROTECT_KEYMAPS
 if "%CHOICE%"=="20" goto GUARD_DAEMON
 if "%CHOICE%"=="21" goto HIGH_REFRESH
 if "%CHOICE%"=="22" goto LOSSLESS_SCALING
+if "%CHOICE%"=="23" goto INSTALL_CHINESE_GAMELOOP
+if "%CHOICE%"=="24" goto NVIDIA_PROFILE
+if "%CHOICE%"=="25" goto TEXTURE_FIX
+if "%CHOICE%"=="26" goto SYNC_ALL
 if "%CHOICE%"=="0" exit /b 0
 goto MENU
 
 :OPTIMIZE_UHD
 cls
 echo ===============================================================================
-echo   Applying 1-Click Tier 6 Ultra HD + 120 FPS + GameLoop 90 Sync...
+echo   Applying 1-Click Master HDR + 120 FPS + Settings Center Alignment...
 echo ===============================================================================
 echo.
-%PY_CMD% tac_engine.py --optimize --res=1920x1080 --dpi=480 --fps=120
+%PY_CMD% sync_and_lock_all_settings.py
 echo.
-echo >> 1-Click Optimization Completed Successfully!
-echo >> In-Game Save: 120 FPS (BattleFPS=8) ^& Ultra HD Locked
-echo >> Settings Center UI: Matches Target 90 FPS with Red Dot
-echo >> GPU Thermals: Cool ^& Silent (Dynamic Scaling, 0%% Fan)
+echo >> 1-Click Master Optimization Completed Successfully!
+echo >> In-Game Save: 120 FPS (BattleFPS=8) & HDR Locked
+echo >> Settings Center UI: Matches 1080P HD 90 FPS Target with Red Dots
+echo >> Device Profile: REDMAGIC 9 Pro (NX769J) Strictly Preserved
 pause
 goto MENU
 
@@ -121,10 +129,10 @@ goto MENU
 :SWITCH_MODEL
 cls
 echo ===============================================================================
-echo   Device Model Switcher (Ultra HD 120 FPS ^& Hit-Reg Profiles)
+echo   Device Model Switcher (HDR 120 FPS ^& Hit-Reg Profiles)
 echo ===============================================================================
 echo.
-echo   [1] REDMAGIC 9 Pro (NX769J)      - [RECOMMENDED] Best Bullet Reg ^& UHD 120
+echo   [1] REDMAGIC 9 Pro (NX769J)      - [RECOMMENDED] Best Bullet Reg ^& HDR 120
 echo   [2] ASUS ROG 8 Pro (AI2401_A)    - Maximum Frametime Pacing ^& Esports Audio
 echo   [3] Samsung Galaxy S24 Ultra      - Maximum Device Whitelist Compatibility
 echo   [4] Samsung Galaxy Tab S9 Ultra   - [REDDIT POPULAR] SM-X910 120 FPS Whitelist
@@ -420,3 +428,48 @@ else:
 echo.
 pause
 goto MENU
+
+:INSTALL_CHINESE_GAMELOOP
+cls
+echo ===============================================================================
+echo   GameLoop Chinese 64-Bit Automated Setup ^& Optimizer (Video Guide)
+echo ===============================================================================
+echo.
+%PY_CMD% install_chinese_gameloop_64bit.py
+echo.
+pause
+goto MENU
+
+:NVIDIA_PROFILE
+cls
+echo ===============================================================================
+echo   GameLoop NVIDIA App ^& RTX 3090 Driver Profile Setup
+echo ===============================================================================
+echo.
+%PY_CMD% setup_nvidia_gameloop_profile.py
+echo.
+pause
+goto MENU
+
+:TEXTURE_FIX
+cls
+echo ===============================================================================
+echo   Fast Texture Streaming ^& In-Game Stutter Fix (8GB VRAM + 15ms Async)
+echo ===============================================================================
+echo.
+%PY_CMD% apply_texture_and_performance_fix.py
+echo.
+pause
+goto MENU
+
+:SYNC_ALL
+cls
+echo ===============================================================================
+echo   Master Sync & Lock All Settings (Settings Center + 1080p + 4-Core CPU)
+echo ===============================================================================
+echo.
+%PY_CMD% sync_and_lock_all_settings.py
+echo.
+pause
+goto MENU
+

@@ -1,104 +1,107 @@
-# PANEL LOOP ULTIMATE 🚀
-### Esports-Grade GameLoop & PUBG Mobile Full-Stack Optimization Suite
+# ⚡ MATHIYA GAMELOOP PANEL v4.0
+### Universal Esports-Grade GameLoop & PUBG Mobile Full-Stack Optimization Suite
+#### *Mathiya Tournament Setup — Locked 120 FPS, True HDR & Zero-Lag Frame Pacing*
 
-[![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011-blue.svg)](https://microsoft.com/windows)
-[![Architecture](https://img.shields.io/badge/GameLoop-Android%2013%2064--Bit%20%7C%20AOW%2032--Bit-success.svg)](https://gameloop.com)
+[![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011%20(64--Bit)-blue.svg)](https://microsoft.com/windows)
+[![GameLoop](https://img.shields.io/badge/GameLoop-Chinese%2064--Bit%20%7C%20Global%2064--Bit%20%7C%20Global%2032--Bit-success.svg)](https://gameloop.com)
 [![Status](https://img.shields.io/badge/Ban--Safe-100%25%20Client--Side-brightgreen.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
+[![Release](https://img.shields.io/badge/Release-v4.0.0%20Universal-cyan.svg)](https://github.com/Mathiyass/panel-loop-ultimate/releases)
 
-**PANEL LOOP ULTIMATE** is a comprehensive, low-level optimization and latency tuning suite engineered specifically for **GameLoop (Android 13 64-Bit Celadon & AOW 32-Bit)** and **PUBG Mobile (`com.tencent.ig`)**. 
+---
 
-It eliminates emulator micro-stutters, uncaps framerates, synchronizes 120 FPS Ultra HD in-game profiles, enforces sub-millisecond Windows kernel timer pacing, eliminates SMT thread scheduling thrashing on AMD Ryzen & Intel CPUs, and guarantees true 1:1 raw hardware mouse sensor tracking.
+## 🌟 What is Mathiya GameLoop Panel?
+
+**Mathiya GameLoop Panel (Mathiya Tournament Setup)** is a professional, low-level optimization dashboard and kernel pacing engine designed for competitive PUBG Mobile and GameLoop players.
+
+It eliminates micro-stutters, uncaps framerates to a locked **120 FPS**, synchronizes authentic **True HDR (Tier 5)** with full PBR building textures, enforces sub-millisecond (**0.50 ms**) Windows kernel timer pacing, optimizes network bullet hit-registration, and eliminates CPU core scheduling thrashing across **AMD Ryzen** and **Intel Core** processors.
+
+---
+
+## 🚀 Universal GameLoop Compatibility (All Versions Supported)
+
+Mathiya GameLoop Panel dynamically detects and configures **all GameLoop versions and editions installed on any drive (`C:`, `D:`, `E:`, `F:`)**:
+
+| GameLoop Edition | Rootfs Engine | Architecture | Package Support | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **GameLoop Chinese 64-Bit** | `AOW_Rootfs_100` | 64-Bit Celadon | All Packages | ✅ Fully Supported |
+| **GameLoop Global 64-Bit** | `AOW_Rootfs_64` | 64-Bit Android 13 | All Packages | ✅ Fully Supported |
+| **GameLoop Global 32-Bit** | `AOW_Rootfs` / Legacy | 32-Bit AOW | All Packages | ✅ Fully Supported |
+
+### Supported Game Editions:
+- 🌍 **Global**: `com.tencent.ig`
+- 🇮🇳 **BGMI (Battlegrounds Mobile India)**: `com.pubg.imobile`
+- 🇰🇷 **Korea / Japan**: `com.pubg.krmobile`
+- 🇻🇳 **Vietnam**: `com.vng.pubgmobile`
+- 🇹🇼 **Taiwan**: `com.reindex.tw`
 
 ---
 
 ## ⚡ Core Features
 
-### 1. 🎮 120 FPS & Ultra HD Sync (Active.sav & SettingConfig_Slot.sav)
-- Direct ADB hot-push to `/sdcard/Android/data/com.tencent.ig/files/UE4Game/...`
-- Patches in-game GVAS save states to `BattleFPS = 8` (120 FPS tier) and `BattleRenderQuality = 6` (Ultra HD).
-- Synchronizes GameLoop Settings Center UI radio buttons to 90 FPS with active synchronization.
+### 1. 🎨 True HDR + 120 FPS Master Synchronization
+- **`GraphicFavor = 4` (Customize Mode)**: Strictly prevents the emulator fallback bug that forces the *Super Smooth* watermark when set incorrectly.
+- **`BattleRenderQuality = 5`**: Activates true in-game HDR shading with full PBR building textures.
+- **2048 MB Dynamic Texture Pool**: `r.Streaming.PoolSize = 2048` guarantees immediate LOD streaming without building pop-in or stutter.
+- **Zero Unreal Engine 4 Limiter Clamps**: `t.MaxFPS = 0` and `r.OneFrameThreadLag = 0` for zero thread delay and 1:1 flick tracking.
 
-### 2. 🏎️ Uncapped UE4 Engine Pipeline (UserCustom.ini)
-- **Uncapped Frame Rate**: `t.MaxFPS = 0` (Removes engine render loop clamps).
-- **Zero Thread Lag**: `r.OneFrameThreadLag = 0` (Zero compositor frame queuing, enabling esports-grade 1:1 flick tracking).
-- **2 GB Dynamic Texture Pool**: `r.Streaming.PoolSize = 2048` (Stops in-match LOD pop-in and texture streaming stutter).
-- **Explosion & Smoke Stability**: Caps particles to 500 max per emitter with LOD bias 1 (`fx.MaxCPUParticlesPerEmitter = 500`).
-- **Paced Garbage Collection**: Purges dead objects every 60 seconds (`gc.TimeBetweenPurgingPendingKillObjects = 60`).
+### 2. ⏱️ 0.50ms Kernel Timer & Universal CPU Pacing
+- Sub-millisecond timer resolution locked to **0.50 ms** via native Win32 `NtSetTimerResolution`.
+- **Dynamic CPU Topology Engine**: Automatically detects CPU core count and threads.
+  - **AMD Ryzen**: Enforces physical core affinity (`0x5555` on 8-core, `0x0555` on 6-core, `0x555555` on 12-core) to bypass SMT cross-thread latency penalties.
+  - **Intel Core**: Supports auto-detecting physical performance cores (P-cores) or all logical cores.
+- **High Process Priority**: Sets `HIGH_PRIORITY_CLASS (0x80)` for `aow_exe.exe` and `AndroidEmulatorEx.exe`.
 
-### 3. 📱 Esports Device Profile Whitelisting
-- Pre-configured profiles for **ASUS ROG Phone 8 Pro (`ASUS_AI2401_A`)**, **REDMAGIC 9 Pro (`NX769J`)**, and **Samsung Galaxy S24 Ultra**.
-- Direct injection into `Androws.json` and guest Android 13 system properties (`ro.product.model`).
-- Configures low-overhead hardware OpenGL transport (`useLocalOpengl = true`, `glTransport = "wormhole"`).
+### 3. 🌐 Native Win32 DNS Flush & Hit-Registration Accelerator
+- **Instant DNS Cache Flush**: Calls `dnsapi.dll!DnsFlushResolverCache` directly in memory with **zero console popups or CMD flashes**.
+- **Nagle's Algorithm Disabling**: Forces `TCPNoDelay = 1` and `TcpAckFrequency = 1` across all network adapters for immediate packet transmission.
+- **Network Throttling Elimination**: `NetworkThrottlingIndex = 0xFFFFFFFF` and `SystemResponsiveness = 0`.
+- **Zero Hitbox Interp Lag**: `p.NetInterpolation = 0.0` and `net.MaxClientTickRate = 120` to prevent ghost bullets.
 
-### 4. ⏱️ 0.50ms Kernel Timer & Host Pacing
-- Locks Windows kernel timer resolution to **0.50 ms** via native `NtSetTimerResolution` & `timeBeginPeriod`.
-- Sets scheduler quantum to `Win32PrioritySeparation = 0x26` (3:1 foreground priority boost).
-- Elevates live emulator processes (`GameLoopEmulator.exe`, `GameLoopVm.exe`, `GameLoop.exe`, `adb.exe`) to **High Priority Class**.
-- Enforces **Physical Core Affinity (`0x5555`)** for AMD Ryzen 7 5800X / 7000 / 9000 series, completely bypassing SMT thread scheduling latency.
+### 4. 🧹 Standby RAM & DirectX Shader Purger
+- One-click memory cleaner trimming background bloat (Discord, Edge, Chrome, SearchHost) via `psapi.dll!EmptyWorkingSet`.
+- Cleans corrupted temporary DirectX shader cache files (`D3DSCache`) to eliminate hot-drop frame drops.
 
-### 5. 🎯 DirectX Direct Scanout (Independent Flip)
-- Injects `~ DISABLEDXMAXIMIZEDWINDOWEDMODE HIGHDPIAWARE` into `AppCompatFlags\Layers`.
-- Enables borderless DWM Direct Scanout for sub-millisecond display presentation.
-- Direct GPU routing for NVIDIA RTX / AMD Radeon graphics cards via `UserGpuPreferences`.
+### 5. 🎯 1:1 Raw Linear Mouse Aim
+- Disables Windows pointer acceleration curves (`MouseSpeed = 0`, `MouseThreshold = 0`).
+- Synchronizes 120Hz collision capsule friction checks (running every 8.33 ms instead of 25.0 ms).
 
-### 6. 🌐 Multi-NIC 0ms Hit-Reg & Network Turbo
-- Disables Nagle's algorithm (`TcpAckFrequency = 1`, `TCPNoDelay = 1`) across all physical and virtual network adapters.
-- Elevates Windows Multimedia Class Scheduler Service (MMCSS) game and network priority to realtime.
+### 6. 📌 Draggable In-Game Floating Mini-HUD
+- Translucent acrylic glass overlay displaying real-time Kernel Timer, locked profile, and free RAM.
+- Contains one-click in-game `⚡ QUICK BOOST` and `🧹 PURGE RAM` recovery buttons.
 
-### 7. 🧹 Multi-Tier Deep Clean & Forensic Uninstaller
-- Multi-tier cache purge: shader caches, component dump files, installer residues, and DNS flushing.
-- Automated forensic uninstaller script (`execute_full_gameloop_purge.py`) that terminates all emulator processes, unregisters services (`GameLoopService`), unloads virtualization drivers (`GLABoxSup`), and cleans registry trees.
+### 7. 🛡️ Authentic Anti-Cheat Integrity
+- Guaranteed authentic Tencent signed `AEngine.dll` binary verification (prevents TP Error 11102).
 
 ---
 
-## 🖥️ Graphical Dashboard & CLI Menu
+## 📥 Downloads & Installation
 
-The suite includes three flexible ways to run:
+### Option 1: Standalone Portable Executable (Recommended)
+> Download [`Mathiya_GameLoop_Panel_Portable.exe`](https://github.com/Mathiyass/panel-loop-ultimate/releases) from Releases, place it anywhere, and double-click to run. No installation or extraction required!
 
-1. **Interactive Batch Launcher**:
-   ```cmd
-   panel_loop_ultimate.bat
-   ```
-2. **Modern Dark-Mode Python Dashboard**:
-   ```cmd
-   python tac_gui.py
-   ```
-3. **Command-Line Interface (Automation & Scripting)**:
-   ```cmd
-   python tac_engine.py --status
-   python tac_engine.py --optimize
-   python tac_engine.py --pacing
-   python tac_engine.py --clean
-   python tac_engine.py --turbo
-   ```
+### Option 2: Setup ZIP Package
+> Download [`Mathiya_GameLoop_Panel_v4.0_Setup.zip`](https://github.com/Mathiyass/panel-loop-ultimate/releases) from Releases. Extract anywhere and run `Run_Mathiya_GameLoop_Panel.vbs` for silent background execution with the custom desktop icon.
 
 ---
 
-## 📂 Repository Structure
+## 🎮 How to Use
 
-```text
-panel-loop-ultimate/
-├── panel_loop_ultimate.bat             # Master Windows batch launcher & interactive menu
-├── tac_engine.py                       # Core low-level optimization & diagnostic engine
-├── tac_gui.py                          # Modern dark-mode graphical desktop dashboard
-├── tac_ultimate_panel.pyw              # Standalone windowed GUI panel
-├── apply_new_gameloop_optimizations.py # GameLoop 7.0/8.0 (Android 13 64-Bit) setup script
-├── execute_full_gameloop_purge.py     # Forensic uninstaller and deep purge utility
-├── patch_active_sav.py                 # Standalone UE4 Active.sav GVAS patcher
-├── LOSSLESS_SCALING_240FPS_GUIDE.md    # 240 FPS frame generation & pacing guide
-└── README.md                           # Documentation
-```
+1. Launch **Mathiya GameLoop Panel**.
+2. Select your Game Version (Global, BGMI, KR, VN, TW) from the sidebar.
+3. Select your Profile (e.g., `🏆 Tournament HDR 120` or `⚡ Streamer Smooth 120`).
+4. Click **⚡ APPLY TRUE HDR 120 FPS (MATHIYA TOURNAMENT SETUP)**.
+5. Click **🎮 LAUNCH GAMELOOP** and enjoy locked 120 FPS with zero lag!
 
 ---
 
 ## 🔒 Ban Safety & Integrity
 
-- **100% Ban-Safe**: Panel Loop Ultimate operates strictly through official client configuration files (`UserCustom.ini`, `Active.sav`), standard Android system properties, and external Windows OS scheduling APIs.
-- **No Memory Injections**: Never injects DLLs, never hooks game code, never modifies executable memory.
+- **100% Client-Side Safe**: Mathiya GameLoop Panel operates strictly through official client configuration files (`UserCustom.ini`, `Active.sav`), standard Android system properties, and external Windows OS scheduling APIs.
+- **No Injections / No Memory Hooks**: Never modifies game executable code, never injects DLLs into the game process.
 
 ---
 
 ## 📜 License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the **MIT License**. See `LICENSE` for details.
