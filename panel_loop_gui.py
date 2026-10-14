@@ -130,7 +130,7 @@ class MiniHUDWindow(ctk.CTkToplevel):
         r2 = ctk.CTkFrame(stats_box, fg_color="transparent")
         r2.pack(fill="x", pady=2)
         ctk.CTkLabel(r2, text="Profile / Quality:", font=ctk.CTkFont(size=10), text_color=COLOR_MUTED).pack(side="left")
-        self.hud_prof_lbl = ctk.CTkLabel(r2, text="HDR 120 FPS Locked", font=ctk.CTkFont(size=10, weight="bold"), text_color=COLOR_CYAN)
+        self.hud_prof_lbl = ctk.CTkLabel(r2, text="UHD 120 (Writable)", font=ctk.CTkFont(size=10, weight="bold"), text_color=COLOR_CYAN)
         self.hud_prof_lbl.pack(side="right")
 
         # Row 3: Available RAM
@@ -308,8 +308,8 @@ class PanelLoopApp(ctk.CTk):
         self.hdr_profile_opt = ctk.CTkOptionMenu(
             right_box,
             values=[
-                "🏆 Streamer HDR 120 (Verified)",
-                "⚡ Tournament HDR 120",
+                "🏆 Streamer UHD 120 (Unlocked)",
+                "⚡ Streamer HDR 120",
                 "🚀 Streamer Flat 120"
             ],
             command=self._on_header_profile_change,
@@ -317,10 +317,10 @@ class PanelLoopApp(ctk.CTk):
             fg_color="#141A26",
             button_color=COLOR_CYAN,
             button_hover_color=COLOR_CYAN_HOVER,
-            width=215,
+            width=225,
             height=32
         )
-        self.hdr_profile_opt.set("🏆 Streamer HDR 120 (Verified)")
+        self.hdr_profile_opt.set("🏆 Streamer UHD 120 (Unlocked)")
         self.hdr_profile_opt.pack(side="left", padx=(0, 8))
 
         # Sound FX Toggle
@@ -379,19 +379,19 @@ class PanelLoopApp(ctk.CTk):
             self.btn_sound.configure(text="🔇 MUTE", text_color=COLOR_MUTED)
 
     def _on_header_profile_change(self, val):
-        if "Verified" in val or "Streamer HDR" in val or "MrBro" in val:
+        if "UHD" in val or "Unlocked" in val or "Verified" in val:
+            self._apply_preset_direct(quality_tier=5, target_fps=0, pool_mb=2048, shadow_scale=1.0, shadow_res=1024)
+        elif "HDR" in val:
             self._apply_preset_direct(quality_tier=6, target_fps=0, pool_mb=2048, shadow_scale=1.0, shadow_res=1024)
-        elif "Tournament" in val or "HDR" in val:
-            self._apply_preset_direct(quality_tier=5, target_fps=0, pool_mb=2048, shadow_scale=0.5, shadow_res=512)
         elif "Flat" in val or "Streamer" in val:
             self._apply_preset_direct(quality_tier=1, target_fps=0, pool_mb=100, shadow_scale=0.0, shadow_res=0)
 
     def _apply_preset_direct(self, quality_tier, target_fps, pool_mb, shadow_scale, shadow_res):
         def worker():
             self.engine.verify_aengine_integrity()
-            self.engine.sync_usercustom_inodes(quality_tier=quality_tier, target_fps=target_fps, pool_mb=pool_mb, shadow_scale=shadow_scale, shadow_res=shadow_res, style=2)
-            self.engine.sync_gvas_saves(quality_tier=quality_tier, fps_enum=8, style=2)
-            self.engine.lock_all_inodes()
+            self.engine.sync_usercustom_inodes(quality_tier=quality_tier, target_fps=target_fps, pool_mb=pool_mb, shadow_scale=shadow_scale, shadow_res=shadow_res, style=2, write_lock=False)
+            self.engine.sync_gvas_saves(quality_tier=quality_tier, fps_enum=8, style=2, write_lock=False)
+            self.engine.unlock_all_inodes()
             if self.sound_enabled:
                 play_cyber_chime("boost")
             self.after(500, self.update_telemetry)
@@ -553,7 +553,7 @@ class PanelLoopApp(ctk.CTk):
 
         btn_master = ctk.CTkButton(
             action_bar,
-            text="⚡ APPLY VERIFIED STREAMER HDR 120 FPS (ZERO COMBAT LAG)",
+            text="⚡ APPLY STREAMER UHD 120 FPS (WRITABLE / NO LOCK)",
             command=self.run_master_boost,
             font=ctk.CTkFont(family="Segoe UI Variable", size=13, weight="bold"),
             fg_color=COLOR_CYAN,
@@ -760,7 +760,7 @@ class PanelLoopApp(ctk.CTk):
         self.shadow_res_opt.grid(row=1, column=1, sticky="w", padx=15, pady=6)
 
         btn_apply_gfx = ctk.CTkButton(
-            container, text="APPLY GRAPHICS PROFILE & LOCK INODES",
+            container, text="APPLY GRAPHICS PROFILE (WRITABLE / NO LOCK)",
             command=self._apply_custom_gfx,
             font=ctk.CTkFont(family="Segoe UI Variable", size=13, weight="bold"),
             fg_color=COLOR_CYAN, text_color="#002022", hover_color=COLOR_CYAN_HOVER,
@@ -791,9 +791,9 @@ class PanelLoopApp(ctk.CTk):
 
         def worker():
             self.engine.verify_aengine_integrity()
-            self.engine.sync_usercustom_inodes(quality_tier=q_tier, target_fps=target_fps, pool_mb=pool, shadow_scale=shadow_scale, shadow_res=shadow_res, style=2)
-            self.engine.sync_gvas_saves(quality_tier=q_tier, fps_enum=8, style=2)
-            self.engine.lock_all_inodes()
+            self.engine.sync_usercustom_inodes(quality_tier=q_tier, target_fps=target_fps, pool_mb=pool, shadow_scale=shadow_scale, shadow_res=shadow_res, style=2, write_lock=False)
+            self.engine.sync_gvas_saves(quality_tier=q_tier, fps_enum=8, style=2, write_lock=False)
+            self.engine.unlock_all_inodes()
             if self.sound_enabled:
                 play_cyber_chime("boost")
             self.after(500, self.update_telemetry)
@@ -1133,8 +1133,8 @@ class PanelLoopApp(ctk.CTk):
 
             hdr_val, hdr_det = self.card_hdr
             if diag.get("fps_locked"):
-                hdr_val.configure(text="Streamer HDR 120", text_color=COLOR_GREEN)
-                hdr_det.configure(text="Verified Setup (BattleFPS=8 | Q=6) Locked")
+                hdr_val.configure(text="Streamer UHD 120", text_color=COLOR_GREEN)
+                hdr_det.configure(text="UHD 120 FPS | Writable (No Lock)")
             else:
                 hdr_val.configure(text="Not Synchronized", text_color=COLOR_RED)
                 hdr_det.configure(text="Click 1-Click Master Boost below")

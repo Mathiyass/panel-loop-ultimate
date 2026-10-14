@@ -15,12 +15,12 @@ DIST_DIR = os.path.join(BASE_DIR, "dist")
 RELEASE_DIR = os.path.join(BASE_DIR, "release")
 os.makedirs(RELEASE_DIR, exist_ok=True)
 
-ZIP_PATH = os.path.join(RELEASE_DIR, "Mathiya_GameLoop_Panel_v4.3_Setup.zip")
+ZIP_PATH = os.path.join(RELEASE_DIR, "Mathiya_GameLoop_Panel_v4.4_Setup.zip")
 PORTABLE_EXE = os.path.join(DIST_DIR, "Mathiya_GameLoop_Panel_Portable.exe")
 ONEDIR_FOLDER = os.path.join(DIST_DIR, "MathiyaGameLoopPanel")
 
 def make_zip():
-    print("[*] Packaging Mathiya GameLoop Panel v4.0 Setup...")
+    print("[*] Packaging Mathiya GameLoop Panel v4.4 Setup...")
 
     readme_content = """===============================================================================
 ⚡ MATHIYA GAMELOOP PANEL v4.0 (MATHIYA TOURNAMENT SETUP)
