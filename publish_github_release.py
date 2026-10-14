@@ -52,7 +52,7 @@ The definitive esports-grade optimization dashboard for **PUBG Mobile** and **Ga
 
 ### 🎮 Chinese Settings Center Strict Alignment
 - **超清2K Resolution**: `com.tencent.ig_ContentScale = 2`
-- **高清 (HD) Quality**: `com.tencent.ig_RenderQuality = 3`
+- **高清 (HD) Quality**: `com.tencent.ig_RenderQuality = 2` (aligned with GameLoop Settings Center binary lookup table)
 - **90 FPS Frame Rate**: `com.tencent.ig_FPSLevel = 90` (strictly matches Chinese GameLoop UI radio buttons to eliminate wrapper jitter).
 
 ---
