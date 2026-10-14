@@ -132,6 +132,18 @@ def main():
     if existing_release:
         release_id = existing_release["id"]
         upload_url = existing_release["upload_url"].split("{")[0]
+        # Update existing release title and body
+        try:
+            patch_url = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/releases/{release_id}"
+            patch_payload = {
+                "name": RELEASE_TITLE,
+                "body": RELEASE_NOTES
+            }
+            req_patch = urllib.request.Request(patch_url, data=json.dumps(patch_payload).encode("utf-8"), headers={**headers, "Content-Type": "application/json"}, method="PATCH")
+            with urllib.request.urlopen(req_patch) as resp:
+                print(f"[+] Updated release {TAG_NAME} title and release notes.")
+        except Exception as e:
+            print(f"[!] Notice updating release body: {e}")
     else:
         # Create new release
         print(f"[*] Creating new GitHub Release: {RELEASE_TITLE}...")
