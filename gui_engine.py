@@ -166,6 +166,7 @@ def detect_gameloop_paths():
     # 3. Known Inode lists
     rfs = detected["rootfs_dir"]
     known_usercustom = [
+        os.path.join(rfs, "2b", "af31"),
         os.path.join(rfs, "12", "485c"),
         os.path.join(rfs, "15", "5585"),
         os.path.join(rfs, "15", "5790"),
@@ -173,6 +174,21 @@ def detect_gameloop_paths():
         os.path.join(rfs, "1d", "7431"),
         os.path.join(rfs, "6", "1bd3")
     ]
+    # Dynamically resolve active UserCustom.ini inode from ext4 directory map (e.g. 6\1bcf)
+    map_1bcf = os.path.join(rfs, "6", "1bcf")
+    if os.path.exists(map_1bcf):
+        try:
+            with open(map_1bcf, "r", encoding="utf-8", errors="ignore") as mf:
+                for line in mf:
+                    if "UserCustom.ini=" in line:
+                        target_id = line.strip().split("=")[1].strip()
+                        for sub in os.listdir(rfs):
+                            cand = os.path.join(rfs, sub, target_id)
+                            if os.path.exists(cand) and cand not in known_usercustom:
+                                known_usercustom.insert(0, cand)
+        except Exception:
+            pass
+
     known_gvas = [
         os.path.join(rfs, "7", "1c78"),
         os.path.join(rfs, "a", "2839"),
@@ -615,6 +631,18 @@ class PanelLoopEngine:
                 winreg.SetValueEx(k, f"{pkg}_RenderQuality", 0, winreg.REG_DWORD, 3) # 高清 (HD / True HDR)
                 winreg.SetValueEx(k, f"{pkg}_FPSLevel", 0, winreg.REG_DWORD, 90) # Strictly match GameLoop 90 FPS UI
 
+            # Also mirror to HKLM paths if accessible
+            for hive in [winreg.HKEY_LOCAL_MACHINE]:
+                for sub in [REG_PATH, r"Software\WOW6432Node\Tencent\MobileGamePC"]:
+                    try:
+                        with winreg.CreateKey(hive, sub) as hk:
+                            for pkg in SUPPORTED_PACKAGES:
+                                winreg.SetValueEx(hk, f"{pkg}_ContentScale", 0, winreg.REG_DWORD, 2)
+                                winreg.SetValueEx(hk, f"{pkg}_RenderQuality", 0, winreg.REG_DWORD, 3)
+                                winreg.SetValueEx(hk, f"{pkg}_FPSLevel", 0, winreg.REG_DWORD, 90)
+                    except Exception:
+                        pass
+
             # Esports device spoofing (REDMAGIC 9 Pro NX769J nubia)
             winreg.SetValueEx(k, "VMDeviceManufacturer", 0, winreg.REG_SZ, "nubia")
             winreg.SetValueEx(k, "VMDeviceModel", 0, winreg.REG_SZ, "NX769J")
@@ -738,11 +766,11 @@ class PanelLoopEngine:
             'LobbyFPS': fps_enum,
             'MainCityFPS': fps_enum,
             'BattleRenderQuality': quality_tier,
-            'LobbyRenderQuality': 5,
-            'MainCityRenderQuality': 5,
-            'ManorRenderQuality': 5,
-            'GFBestQBattle': 5,
-            'GFBestQLobby': 5,
+            'LobbyRenderQuality': quality_tier,
+            'MainCityRenderQuality': quality_tier,
+            'ManorRenderQuality': quality_tier,
+            'GFBestQBattle': quality_tier,
+            'GFBestQLobby': quality_tier,
             'GraphicFavor': 4, # 4 = Customize mode (Allows 120 FPS & custom rendering without Super Smooth forced)
             'BattleRenderStyle': style,
             'LobbyRenderStyle': style,
@@ -788,9 +816,16 @@ class PanelLoopEngine:
         self.log(f"Synchronizing GVAS save inodes to Streamer UHD 120 FPS (Quality={quality_tier}, Writable={not write_lock})...", "INFO")
         master_template = os.path.join(LOCAL_OPT_DIR, "Active.sav")
         master_src = os.path.join(self.paths["rootfs_dir"], "7", "1c78")
+        user_dl_sav = os.path.join(os.path.expanduser("~"), "Downloads", "Active.sav")
         master_bytes = None
         
-        if os.path.exists(master_template):
+        # Prefer the user's latest custom Active.sav (e.g. from Downloads) if it contains full layout/custom properties
+        if os.path.exists(user_dl_sav) and os.path.getsize(user_dl_sav) > 12000:
+            with open(user_dl_sav, "rb") as f:
+                raw = f.read()
+            master_bytes, _ = self.patch_gvas_buffer(raw, quality_tier, fps_enum, style)
+            self.log(f"Using player's personalized Active.sav from Downloads ({len(raw)} bytes) as master template.", "SUCCESS")
+        elif os.path.exists(master_template):
             with open(master_template, "rb") as f:
                 raw = f.read()
             master_bytes, _ = self.patch_gvas_buffer(raw, quality_tier, fps_enum, style)
@@ -806,7 +841,6 @@ class PanelLoopEngine:
             os.path.join(LOCAL_OPT_DIR, "Active.sav"),
             os.path.join(LOCAL_OPT_DIR, "SettingConfig_Slot.sav")
         ]
-        user_dl_sav = os.path.join(os.path.expanduser("~"), "Downloads", "Active.sav")
         if os.path.exists(user_dl_sav):
             targets.append(user_dl_sav)
 
