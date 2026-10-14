@@ -682,7 +682,7 @@ class PanelLoopEngine:
             f"r.Shadow.CSM.MaxMobileCascades={0 if is_flat else 1}",
             f"r.Shadow.MaxCSMResolution={0 if is_flat else shadow_res}",
             "r.Mobile.EnablePPR=1.0" if quality_tier >= 4 else "r.Mobile.EnablePPR=0.0",
-            "r.UserHDRSetting=2" if quality_tier >= 4 else "r.UserHDRSetting=0",
+            "r.UserHDRSetting=3" if quality_tier == 5 else ("r.UserHDRSetting=2" if quality_tier in (4, 6) else "r.UserHDRSetting=0"),
             f"r.ACESStyle={style}",
             "r.DetailMode=0" if is_flat else "r.DetailMode=2",
             "r.DefaultFeature.AntiAliasing=0.0",
@@ -806,6 +806,9 @@ class PanelLoopEngine:
             os.path.join(LOCAL_OPT_DIR, "Active.sav"),
             os.path.join(LOCAL_OPT_DIR, "SettingConfig_Slot.sav")
         ]
+        user_dl_sav = os.path.join(os.path.expanduser("~"), "Downloads", "Active.sav")
+        if os.path.exists(user_dl_sav):
+            targets.append(user_dl_sav)
 
         count = 0
         for p in set(targets):
