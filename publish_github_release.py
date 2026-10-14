@@ -26,8 +26,8 @@ DIST_DIR = os.path.join(BASE_DIR, "dist")
 
 REPO_OWNER = "Mathiyass"
 REPO_NAME = "panel-loop-ultimate"
-TAG_NAME = "v4.1.0"
-RELEASE_TITLE = "⚡ Mathiya GameLoop Panel v4.1 — Streamer Flat-Texture 120 FPS & Zero Combat Lag Edition"
+TAG_NAME = "v4.2.0"
+RELEASE_TITLE = "⚡ Mathiya GameLoop Panel v4.2 — MrBro Ultra HD 120 FPS & Zero Combat Lag Edition"
 
 RELEASE_NOTES = """# ⚡ Mathiya GameLoop Panel v4.1 (Mathiya Tournament Setup)
 
@@ -182,7 +182,7 @@ def main():
     # 3. Upload Assets
     assets_to_upload = [
         ("Mathiya_GameLoop_Panel_Portable.exe", os.path.join(DIST_DIR, "Mathiya_GameLoop_Panel_Portable.exe"), "application/octet-stream"),
-        ("Mathiya_GameLoop_Panel_v4.1_Setup.zip", os.path.join(RELEASE_DIR, "Mathiya_GameLoop_Panel_v4.1_Setup.zip"), "application/zip")
+        ("Mathiya_GameLoop_Panel_v4.2_Setup.zip", os.path.join(RELEASE_DIR, "Mathiya_GameLoop_Panel_v4.2_Setup.zip"), "application/zip")
     ]
 
     # Get list of existing assets on this release

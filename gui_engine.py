@@ -373,7 +373,7 @@ class PanelLoopEngine:
             winreg.CloseKey(k)
             diag["device_model"] = model
             diag["phone_device"] = phone
-            diag["settings_center"] = "2K | HD | 90 FPS" if (scale == 2 and quality == 2 and fps == 90) else f"Scale={scale}, Q={quality}, FPS={fps}"
+            diag["settings_center"] = "2K | 高清 (HD) | 90 FPS" if (scale == 2 and quality == 3 and fps == 90) else f"Scale={scale}, Q={quality}, FPS={fps}"
         except Exception:
             pass
 
@@ -609,11 +609,11 @@ class PanelLoopEngine:
         try:
             k = winreg.CreateKey(winreg.HKEY_CURRENT_USER, REG_PATH)
 
-            # Apply 120 FPS & HD graphics across ALL supported packages
+            # Apply 90 FPS & HD graphics across ALL supported packages to match Chinese Settings Center
             for pkg in SUPPORTED_PACKAGES:
                 winreg.SetValueEx(k, f"{pkg}_ContentScale", 0, winreg.REG_DWORD, 2)
                 winreg.SetValueEx(k, f"{pkg}_RenderQuality", 0, winreg.REG_DWORD, 3) # 高清 (HD / True HDR)
-                winreg.SetValueEx(k, f"{pkg}_FPSLevel", 0, winreg.REG_DWORD, 120)
+                winreg.SetValueEx(k, f"{pkg}_FPSLevel", 0, winreg.REG_DWORD, 90) # Strictly match GameLoop 90 FPS UI
 
             # Esports device spoofing (REDMAGIC 9 Pro NX769J nubia)
             winreg.SetValueEx(k, "VMDeviceManufacturer", 0, winreg.REG_SZ, "nubia")
@@ -743,7 +743,7 @@ class PanelLoopEngine:
             'GraphicFavor': 4, # 4 = Customize mode (Allows 120 FPS & custom rendering without Super Smooth forced)
             'BattleRenderStyle': style,
             'LobbyRenderStyle': style,
-            'nEnhancedLobbyQuality': 2
+            'nEnhancedLobbyQuality': 0
         }
         bool_targets = {
             'HasGraphicsSeparateConfig': 0,
@@ -943,9 +943,9 @@ class PanelLoopEngine:
     # -------------------------------------------------------------------------
     # MASTER OPTIMIZATION RUNNER
     # -------------------------------------------------------------------------
-    def apply_master_esports_optimization(self, quality_tier=1, target_fps=0, pool_mb=0, shadow_scale=0.0, shadow_res=0, style=2):
+    def apply_master_esports_optimization(self, quality_tier=5, target_fps=0, pool_mb=2048, shadow_scale=1.0, shadow_res=1024, style=2):
         self.log("==================================================================", "INFO")
-        self.log("APPLYING STREAMER ZERO-LAG SETUP: FLAT TEXTURES & ZERO COMBAT STUTTER", "SUCCESS")
+        self.log("APPLYING MRBRO ULTRA HD 120 FPS SETUP (TRUE ULTRA HD + ZERO COMBAT LAG)", "SUCCESS")
         self.log(f"CPU: {self.cpu['name']} ({self.cpu['threads']} Threads) | GPU: NVIDIA RTX 3090 | 180Hz Monitor", "INFO")
         self.log("==================================================================", "INFO")
 
