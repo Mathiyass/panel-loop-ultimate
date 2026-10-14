@@ -104,7 +104,7 @@ def main():
     print("[+] Successfully pushed 'main' branch.")
 
     print(f"[*] Pushing tag '{TAG_NAME}' to GitHub...")
-    res_tag = subprocess.run(["git", "push", push_url, TAG_NAME], cwd=BASE_DIR, capture_output=True, text=True)
+    res_tag = subprocess.run(["git", "push", push_url, TAG_NAME, "--force"], cwd=BASE_DIR, capture_output=True, text=True)
     if res_tag.returncode != 0:
         print(f"[-] Git push tag failed: {res_tag.stderr}")
         # tag might already exist, continue
