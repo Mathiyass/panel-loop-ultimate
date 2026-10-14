@@ -166,6 +166,7 @@ def detect_gameloop_paths():
     # 3. Known Inode lists
     rfs = detected["rootfs_dir"]
     known_usercustom = [
+        os.path.join(rfs, "31", "c6a2"),
         os.path.join(rfs, "2b", "af31"),
         os.path.join(rfs, "12", "485c"),
         os.path.join(rfs, "15", "5585"),
@@ -682,6 +683,7 @@ class PanelLoopEngine:
         is_flat = (pool_mb == 0 or quality_tier <= 2)
         cvars = [
             "r.PUBGVersion=5",
+            "r.PUBGQualityLevel=1",
             f"r.UserQualitySetting={quality_tier}",
             "r.MaterialQualityLevel=0" if is_flat else "r.MaterialQualityLevel=2",
             "r.MaterialQualitySuperHigh=0.0",
@@ -710,7 +712,7 @@ class PanelLoopEngine:
             f"r.Shadow.CSM.MaxMobileCascades={0 if is_flat else 1}",
             f"r.Shadow.MaxCSMResolution={0 if is_flat else shadow_res}",
             "r.Mobile.EnablePPR=1.0" if quality_tier >= 4 else "r.Mobile.EnablePPR=0.0",
-            "r.UserHDRSetting=3" if quality_tier == 5 else ("r.UserHDRSetting=2" if quality_tier in (4, 6) else "r.UserHDRSetting=0"),
+            "r.UserHDRSetting=3" if quality_tier >= 5 else ("r.UserHDRSetting=2" if quality_tier == 4 else "r.UserHDRSetting=0"),
             f"r.ACESStyle={style}",
             "r.DetailMode=0" if is_flat else "r.DetailMode=2",
             "r.DefaultFeature.AntiAliasing=0.0",
@@ -1016,17 +1018,22 @@ class PanelLoopEngine:
         # 6. Universal GameLoop Registry Settings Center (All Packages)
         self.sync_gameloop_registry()
 
-        # 7. Sync UserCustom Inodes
-        self.sync_usercustom_inodes(quality_tier=quality_tier, target_fps=target_fps, pool_mb=pool_mb, shadow_scale=shadow_scale, shadow_res=shadow_res, style=style, write_lock=write_lock)
+        # 7. Sync UserCustom Inodes (SELECTIVE WRITE-LOCK: Protects r.UserHDRSetting=3 from GameLoop overwrite)
+        self.sync_usercustom_inodes(quality_tier=quality_tier, target_fps=target_fps, pool_mb=pool_mb, shadow_scale=shadow_scale, shadow_res=shadow_res, style=style, write_lock=True)
 
-        # 8. Sync GVAS Saves (GraphicFavor=4 Customize Mode, BattleFPS=8 120 FPS Locked)
-        self.sync_gvas_saves(quality_tier=quality_tier, fps_enum=8, style=style, write_lock=write_lock)
+        # 8. Sync GVAS Saves (STRICTLY WRITABLE: Player sensitivities, layout, audio persist cleanly)
+        self.sync_gvas_saves(quality_tier=quality_tier, fps_enum=8, style=style, write_lock=False)
 
-        # 9. Inode Permissions (Preserve writable status unless specifically requested)
-        if write_lock:
-            self.lock_all_inodes()
-        else:
-            self.unlock_all_inodes()
+        # 9. Selective Inode Permissions: Ensure GVAS saves are writable, UserCustom remains locked
+        user_dl_sav = os.path.join(os.path.expanduser("~"), "Downloads", "Active.sav")
+        for p in self.paths["gvas_save_inodes"] + [user_dl_sav]:
+            if os.path.exists(p):
+                unlock_path(p)
+
+        # Protect mapping file 6\1bcf so GameLoop cannot remap UserCustom.ini
+        map_1bcf = os.path.join(self.paths["rootfs_dir"], "6", "1bcf")
+        if os.path.exists(map_1bcf):
+            lock_path(map_1bcf)
 
         # 10. Process Pacing & Memory Purge
         self.enforce_process_pacing()
