@@ -88,7 +88,7 @@ https://github.com/Mathiyass/panel-loop-ultimate
 
     # Also record hash file
     with open(ZIP_PATH + ".sha256", "w") as f:
-        f.write(f"{hash_hex}  Mathiya_GameLoop_Panel_v4.3_Setup.zip\n")
+        f.write(f"{hash_hex}  Mathiya_GameLoop_Panel_v4.4_Setup.zip\n")
 
     return ZIP_PATH
 

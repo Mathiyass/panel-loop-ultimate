@@ -380,18 +380,22 @@ class PanelLoopApp(ctk.CTk):
 
     def _on_header_profile_change(self, val):
         if "UHD" in val or "Unlocked" in val or "Verified" in val:
-            self._apply_preset_direct(quality_tier=5, target_fps=0, pool_mb=2048, shadow_scale=1.0, shadow_res=1024)
-        elif "HDR" in val:
             self._apply_preset_direct(quality_tier=6, target_fps=0, pool_mb=2048, shadow_scale=1.0, shadow_res=1024)
+        elif "HDR" in val:
+            self._apply_preset_direct(quality_tier=5, target_fps=0, pool_mb=2048, shadow_scale=1.0, shadow_res=1024)
         elif "Flat" in val or "Streamer" in val:
             self._apply_preset_direct(quality_tier=1, target_fps=0, pool_mb=100, shadow_scale=0.0, shadow_res=0)
 
     def _apply_preset_direct(self, quality_tier, target_fps, pool_mb, shadow_scale, shadow_res):
         def worker():
             self.engine.verify_aengine_integrity()
-            self.engine.sync_usercustom_inodes(quality_tier=quality_tier, target_fps=target_fps, pool_mb=pool_mb, shadow_scale=shadow_scale, shadow_res=shadow_res, style=2, write_lock=False)
+            self.engine.sync_usercustom_inodes(quality_tier=quality_tier, target_fps=target_fps, pool_mb=pool_mb, shadow_scale=shadow_scale, shadow_res=shadow_res, style=2, write_lock=True)
             self.engine.sync_gvas_saves(quality_tier=quality_tier, fps_enum=8, style=2, write_lock=False)
-            self.engine.unlock_all_inodes()
+            user_dl_sav = os.path.join(os.path.expanduser("~"), "Downloads", "Active.sav")
+            for p in self.engine.paths["gvas_save_inodes"] + [user_dl_sav]:
+                if os.path.exists(p):
+                    from gui_engine import unlock_path
+                    unlock_path(p)
             if self.sound_enabled:
                 play_cyber_chime("boost")
             self.after(500, self.update_telemetry)
@@ -721,12 +725,13 @@ class PanelLoopApp(ctk.CTk):
 
         ctk.CTkLabel(pcard, text="GRAPHICS PROFILE PRESET", font=ctk.CTkFont(size=13, weight="bold"), text_color=COLOR_TEXT).pack(anchor="w", padx=15, pady=(4, 8))
 
-        self.preset_var = tk.StringVar(value="streamer120")
+        self.preset_var = tk.StringVar(value="uhd120")
         presets = [
-            ("streamer120", "🏆 Streamer Zero-Lag (Flat Pastel Buildings & 120 FPS Combat) [RECOMMENDED]", "Zero Texture Streaming (PoolSize=0), Zero Dynamic Shadows, 1.0ms Async Cap, Combat Particle Cap, Locked 120 FPS"),
-            ("hdr120", "⚡ Cinematic True HDR 120 FPS (Full PBR Building Textures)", "Tier 5 HDR, GraphicFavor=4 (Customize Mode), 2GB Texture Pool, Colorful Style, High Details"),
+            ("uhd120", "🏆 Ultra HD 120 FPS (Streamer MrBro [Ultra HD] Watermark) [RECOMMENDED]", "Tier 6 Ultra HD, r.MaterialQualitySuperHigh=1.0, GraphicFavor=4, 2GB Texture Pool, Locked 120 FPS"),
+            ("streamer120", "⚡ Streamer Zero-Lag (Flat Pastel Buildings & 120 FPS Combat)", "Zero Texture Streaming (PoolSize=0), Zero Dynamic Shadows, 1.0ms Async Cap, Combat Particle Cap, Locked 120 FPS"),
+            ("hdr120", "🎬 Cinematic True HDR 120 FPS (Full PBR Building Textures)", "Tier 5 HDR, GraphicFavor=4 (Customize Mode), 2GB Texture Pool, Colorful Style, High Details"),
             ("uncapped180", "🚀 Maximum Uncapped FPS (180Hz Monitor Synchronized)", "Flat Textures, t.MaxFPS=0 (Zero Limiter), 0ms Thread Lag, 180Hz+ Scanout"),
-            ("balanced120", "🎬 Balanced 2K 90 FPS HDR", "Tier 2 Balanced Shading, 2K Resolution, Maximum visual clarity")
+            ("balanced120", "🎮 Balanced 2K 90 FPS HDR", "Tier 2 Balanced Shading, 2K Resolution, Maximum visual clarity")
         ]
 
         for val, title, desc in presets:
@@ -772,7 +777,12 @@ class PanelLoopApp(ctk.CTk):
         choice = self.preset_var.get()
         pool = int(self.pool_slider.get())
         shadow_res = 512 if "512" in self.shadow_res_opt.get() else 1024
-        if choice in ("streamer120", "uncapped180"):
+        if choice == "uhd120":
+            q_tier = 6
+            target_fps = 0
+            shadow_scale = 1.0
+            shadow_res = 1024
+        elif choice in ("streamer120", "uncapped180"):
             q_tier = 1
             target_fps = 0
             pool = 0
@@ -791,9 +801,13 @@ class PanelLoopApp(ctk.CTk):
 
         def worker():
             self.engine.verify_aengine_integrity()
-            self.engine.sync_usercustom_inodes(quality_tier=q_tier, target_fps=target_fps, pool_mb=pool, shadow_scale=shadow_scale, shadow_res=shadow_res, style=2, write_lock=False)
+            self.engine.sync_usercustom_inodes(quality_tier=q_tier, target_fps=target_fps, pool_mb=pool, shadow_scale=shadow_scale, shadow_res=shadow_res, style=2, write_lock=True)
             self.engine.sync_gvas_saves(quality_tier=q_tier, fps_enum=8, style=2, write_lock=False)
-            self.engine.unlock_all_inodes()
+            user_dl_sav = os.path.join(os.path.expanduser("~"), "Downloads", "Active.sav")
+            for p in self.engine.paths["gvas_save_inodes"] + [user_dl_sav]:
+                if os.path.exists(p):
+                    from gui_engine import unlock_path
+                    unlock_path(p)
             if self.sound_enabled:
                 play_cyber_chime("boost")
             self.after(500, self.update_telemetry)

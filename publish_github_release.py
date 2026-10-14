@@ -27,27 +27,28 @@ DIST_DIR = os.path.join(BASE_DIR, "dist")
 REPO_OWNER = "Mathiyass"
 REPO_NAME = "panel-loop-ultimate"
 TAG_NAME = "v4.4.0"
-RELEASE_TITLE = "⚡ Mathiya GameLoop Panel v4.4 — Streamer UHD 120 FPS Writable Edition"
+RELEASE_TITLE = "⚡ Mathiya GameLoop Panel v4.4 — Tier 6 Ultra HD 120 FPS Edition"
 
-RELEASE_NOTES = """# ⚡ Mathiya GameLoop Panel v4.4 (Streamer UHD 120 FPS Writable Edition)
+RELEASE_NOTES = """# ⚡ Mathiya GameLoop Panel v4.4 (Tier 6 Ultra HD 120 FPS Edition)
 
-### 🏆 Streamer UHD (Ultra HD / Tier 5) 120 FPS & Writable Save Architecture
+### 🏆 Authentic Tier 6 Ultra HD 120 FPS & Selective Lock Architecture
 The definitive esports-grade optimization dashboard for **PUBG Mobile** and **GameLoop**.
 
 ---
 
-## 🚀 What's New in v4.4 (Streamer UHD 120 FPS Writable Edition)
+## 🚀 What's New in v4.4 (Tier 6 Ultra HD 120 FPS Edition)
 
-### 👑 Streamer UHD (Ultra HD / Tier 5) In-Game Engine Pipeline
-- **Authentic UHD (Tier 5) Activation**: `BattleRenderQuality = 5`, `LobbyRenderQuality = 5`, `ManorRenderQuality = 5`, and `MainCityRenderQuality = 5`.
-- **Watermark Confirmed**: In-game bottom-left watermark displays **`Ultra HD ⚡ [ping]`** running at locked **119–120 FPS**.
+### 👑 Authentic Tier 6 Ultra HD In-Game Engine Pipeline
+- **Tier 6 Ultra HD Activation**: `BattleRenderQuality = 6`, `LobbyRenderQuality = 6`, `ManorRenderQuality = 6`, and `MainCityRenderQuality = 6` (fixes Cheer Park watermark!).
+- **Super High Surface Shaders**: `r.MaterialQualitySuperHigh = 1.0` and `r.UserQualitySetting = 6` loaded in `UserCustom.ini` DeviceProfile.
+- **Watermark Confirmed**: In-game bottom-left watermark in Classic Matches and Cheer Park displays **`[Ultra HD] ⚡ [ping]`** running at locked **119–120 FPS**.
 - **Ultra Extreme 120 FPS Frame Loop**: `BattleFPS = 8` and `GraphicFavor = 4` (Customize Mode) prevents the game engine from ever falling back to lower presets.
 - **Zero Texture Stutter**: 2048 MB pre-allocated VRAM streaming pool with `FullyLoadUsedTextures = 1` caches all weapon and building textures into GPU memory.
 
-### 🔓 Unlocked & Writable File System (No Write-Locking)
-- **Zero Read-Only Locks**: All save files (`Active.sav`, `SettingConfig_Slot.sav`) and `UserCustom.ini` inodes remain completely unlocked with `FILE_ATTRIBUTE_NORMAL`.
+### 🛡️ Selective Lock Architecture (Writable Player Customization)
+- **Writable Save Files**: `Active.sav` (`7\1c78`) and `SettingConfig_Slot.sav` (`a\2839`) remain strictly **writable** (`ReadOnly = False`).
 - **Full In-Game Customization Support**: Players can adjust sensitivity, controls, audio volumes, and HUD layouts in-game without permission conflicts or save reverts.
-- **Universal Save Inode Sync**: Atomically clones the UHD 120 FPS template to guest inodes (`7\1c78`, `a\2839`), shared folders, and local repository while maintaining full read-write permissions.
+- **Locked UserCustom Inodes**: `UserCustom.ini` (`31\c6a2`) and directory mapping (`6\1bcf`) are locked `ReadOnly = True` to permanently safeguard `r.UserQualitySetting = 6` from GameLoop Settings Center downgrades.
 
 ### 🎮 Chinese Settings Center Strict Alignment
 - **超清2K Resolution**: `com.tencent.ig_ContentScale = 2`

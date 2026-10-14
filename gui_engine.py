@@ -686,7 +686,7 @@ class PanelLoopEngine:
             "r.PUBGQualityLevel=1",
             f"r.UserQualitySetting={quality_tier}",
             "r.MaterialQualityLevel=0" if is_flat else "r.MaterialQualityLevel=2",
-            "r.MaterialQualitySuperHigh=0.0",
+            "r.MaterialQualitySuperHigh=1.0" if quality_tier >= 5 else "r.MaterialQualitySuperHigh=0.0",
             f"r.Streaming.PoolSize={0 if is_flat else pool_mb}",
             "r.Streaming.UseFixedPoolSize=1",
             "r.Streaming.FullyLoadUsedTextures=0" if is_flat else "r.Streaming.FullyLoadUsedTextures=1",
@@ -734,7 +734,7 @@ class PanelLoopEngine:
         lines.append("")
         return "\r\n".join(lines)
 
-    def sync_usercustom_inodes(self, quality_tier=5, target_fps=0, pool_mb=2048, shadow_scale=1.0, shadow_res=1024, style=2, write_lock=False):
+    def sync_usercustom_inodes(self, quality_tier=6, target_fps=0, pool_mb=2048, shadow_scale=1.0, shadow_res=1024, style=2, write_lock=True):
         self.log(f"Synchronizing UserCustom guest inodes (Quality={quality_tier}, Writable={not write_lock})...", "INFO")
         content = self.generate_usercustom_content(quality_tier, target_fps, pool_mb, shadow_scale, shadow_res, style)
 
@@ -761,7 +761,7 @@ class PanelLoopEngine:
                 self.log(f"Failed syncing inode {inode}: {e}", "WARN")
         self.log(f"Synchronized {count} UserCustom guest inodes (write_locked={write_lock}).", "SUCCESS")
 
-    def patch_gvas_buffer(self, buf, quality_tier=5, fps_enum=8, style=2):
+    def patch_gvas_buffer(self, buf, quality_tier=6, fps_enum=8, style=2):
         targets = {
             'FPSLevel': fps_enum,
             'BattleFPS': fps_enum,
@@ -814,7 +814,7 @@ class PanelLoopEngine:
 
         return bytes(data), modified
 
-    def sync_gvas_saves(self, quality_tier=5, fps_enum=8, style=2, write_lock=False):
+    def sync_gvas_saves(self, quality_tier=6, fps_enum=8, style=2, write_lock=False):
         self.log(f"Synchronizing GVAS save inodes to Streamer UHD 120 FPS (Quality={quality_tier}, Writable={not write_lock})...", "INFO")
         master_template = os.path.join(LOCAL_OPT_DIR, "Active.sav")
         master_src = os.path.join(self.paths["rootfs_dir"], "7", "1c78")
@@ -994,7 +994,7 @@ class PanelLoopEngine:
     # -------------------------------------------------------------------------
     # MASTER OPTIMIZATION RUNNER
     # -------------------------------------------------------------------------
-    def apply_master_esports_optimization(self, quality_tier=5, target_fps=0, pool_mb=2048, shadow_scale=1.0, shadow_res=1024, style=2, write_lock=False):
+    def apply_master_esports_optimization(self, quality_tier=6, target_fps=0, pool_mb=2048, shadow_scale=1.0, shadow_res=1024, style=2, write_lock=False):
         self.log("==================================================================", "INFO")
         self.log("APPLYING STREAMER UHD 120 FPS SETUP (WRITABLE / NO LOCK + ZERO COMBAT LAG)", "SUCCESS")
         self.log(f"CPU: {self.cpu['name']} ({self.cpu['threads']} Threads) | GPU: NVIDIA RTX 3090 | 180Hz Monitor", "INFO")
@@ -1018,7 +1018,7 @@ class PanelLoopEngine:
         # 6. Universal GameLoop Registry Settings Center (All Packages)
         self.sync_gameloop_registry()
 
-        # 7. Sync UserCustom Inodes (SELECTIVE WRITE-LOCK: Protects r.UserHDRSetting=3 from GameLoop overwrite)
+        # 7. Sync UserCustom Inodes (SELECTIVE WRITE-LOCK: Protects r.UserHDRSetting=3 & r.UserQualitySetting=6 from GameLoop overwrite)
         self.sync_usercustom_inodes(quality_tier=quality_tier, target_fps=target_fps, pool_mb=pool_mb, shadow_scale=shadow_scale, shadow_res=shadow_res, style=style, write_lock=True)
 
         # 8. Sync GVAS Saves (STRICTLY WRITABLE: Player sensitivities, layout, audio persist cleanly)
@@ -1077,10 +1077,14 @@ class PanelLoopEngine:
             active = get_live_pids(targets)
             is_running = len(active) > 0
             if is_running and not was_running:
-                self.log("WATCHDOG: GameLoop launch detected! Enforcing 0.50ms pacing & maintaining writable inodes...", "SUCCESS")
+                self.log("WATCHDOG: GameLoop launch detected! Enforcing 0.50ms pacing & maintaining writable GVAS saves...", "SUCCESS")
                 self.lock_kernel_timer(5000)
                 self.enforce_process_pacing()
-                self.unlock_all_inodes()
+                # Maintain selective permissions: ensure GVAS saves stay writable
+                user_dl_sav = os.path.join(os.path.expanduser("~"), "Downloads", "Active.sav")
+                for p in self.paths["gvas_save_inodes"] + [user_dl_sav]:
+                    if os.path.exists(p):
+                        unlock_path(p)
                 self.purge_standby_and_shader_cache()
                 if callback:
                     try:
